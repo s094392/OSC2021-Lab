@@ -107,7 +107,7 @@ int fputs(const char *str, FILE *stream) {
     return putchar('\n');
 }
 
-int puts(const char *str) { return fputs(str, &_stdout); }
+int puts(const char *str) { return fputs(str, stdout); }
 
 void putd(int num, int prefix_zeros, int positive) {
     unsigned int divisor = 1000000000; /* only for 32-bit integer */

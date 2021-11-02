@@ -65,4 +65,5 @@ void _load() {
     char* bootloader_start = (char*)0x80000;
     move(base_start, bootloader_start, (char*)&_end);
     ((void (*)())((char*)main - bootloader_start + base_start))();
+    main();
 }
