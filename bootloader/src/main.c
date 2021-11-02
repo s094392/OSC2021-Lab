@@ -2,8 +2,9 @@
 #include "stdio.h"
 #include "string.h"
 #include "uart.h"
+extern char _end;
 
-void read_cmd(char *cmd) {
+void read_cmd(char* cmd) {
     char now;
     cmd[0] = 0;
     int now_cur = 0;
@@ -38,15 +39,30 @@ void shell() {
     } else if (!strcmp(cmd, "hello")) {
         printf("Hello World!\r\n");
     } else if (!strcmp(cmd, "reboot")) {
-        /*reset(10);*/
+        reset(10);
     } else if (!strcmp(cmd, "clear")) {
         printf("\033[2J\033[1;1H");
+    } else if (!strcmp(cmd, "load")) {
     } else {
         printf("command not found: %s\r\n", cmd);
     }
 }
 
+void move(char* base_start, char* start, char* bootloader_end) {
+    long offset = start - base_start;
+    for (char* i = (char*)start; i <= bootloader_end; i++) {
+        *(i - offset) = *i;
+    }
+}
+
 int main() {
-    uart_init();
     while (1) shell();
+}
+
+void _load() {
+    uart_init();
+    char* base_start = (char*)0x60000;
+    char* bootloader_start = (char*)0x80000;
+    move(base_start, bootloader_start, (char*)&_end);
+    ((void (*)())((char*)main - bootloader_start + base_start))();
 }
