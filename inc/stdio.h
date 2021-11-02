@@ -35,7 +35,8 @@
 //     this list of conditions and the following disclaimer in the documentation
 //     and/or other materials provided with the distribution.
 //
-//  3. Neither the name of the copyright holder nor the names of its contributors
+//  3. Neither the name of the copyright holder nor the names of its
+//  contributors
 //     may be used to endorse or promote products derived from this software
 //     without specific prior written permission.
 //
@@ -59,9 +60,9 @@
 
 #define EOF -1
 
-typedef struct {  /* dummy type for now */
-	int fd;
-	int ostat;
+typedef struct { /* dummy type for now */
+    int fd;
+    int ostat;
 } FILE;
 
 extern FILE *stdin;
@@ -70,7 +71,8 @@ extern FILE *stderr;
 
 int printf(char *fmt, ...);
 int fputs(const char *s, FILE *fp);
+int puts(const char *s);
 int putchar(int c);
-int getchar(void);
+char getchar(void);
 char *fgets(char *s, int n, FILE *fp);
 #endif

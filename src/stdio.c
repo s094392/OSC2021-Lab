@@ -75,7 +75,7 @@ FILE *stderr = &_stderr;
 // =============================================================================
 //  Standard C stdio functions that call outbyte/inbyte.
 // =============================================================================
-inline int getchar(void) { return (int)inbyte(); }
+inline char getchar(void) { return (int)inbyte(); }
 
 char *fgets(char *s, int n, FILE *stream) {
     char *rtn = s;
@@ -106,6 +106,8 @@ int fputs(const char *str, FILE *stream) {
     }
     return putchar('\n');
 }
+
+int puts(const char *str) { return fputs(str, &_stdout); }
 
 void putd(int num, int prefix_zeros, int positive) {
     unsigned int divisor = 1000000000; /* only for 32-bit integer */
