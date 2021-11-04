@@ -45,6 +45,9 @@ void uart_init() {
     }
     *GPPUDCLK0 = 0;    // flush GPIO setup
     *AUX_MU_CNTL = 3;  // enable Tx, Rx
+    while (*AUX_MU_LSR & 0x01) {
+        (void)*AUX_MU_IO;  // unused variable
+    }
 }
 
 /**
@@ -71,5 +74,5 @@ unsigned char inbyte() {
     /* read it and return */
     r = (char)(*AUX_MU_IO);
     /* convert carrige return to newline */
-    return r == '\r' ? '\n' : r;
+    return r;
 }

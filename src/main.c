@@ -34,15 +34,15 @@ void shell() {
         printf(
             "help      : print this help menu\n"
             "hello     : print Hello World!\n"
-            "reboot    : reboot the device\r\n");
+            "reboot    : reboot the device\n");
     } else if (!strcmp(cmd, "hello")) {
-        printf("Hello World!\r\n");
+        printf("Hello World!\n");
     } else if (!strcmp(cmd, "reboot")) {
-        /*reset(10);*/
+        reset(10);
     } else if (!strcmp(cmd, "clear")) {
         printf("\033[2J\033[1;1H");
     } else {
-        printf("command not found: %s\r\n", cmd);
+        printf("command not found: %s\n", cmd);
     }
 }
 

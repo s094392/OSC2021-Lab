@@ -98,6 +98,7 @@ char *fgets(char *s, int n, FILE *stream) {
 }
 
 inline int putchar(int c) {
+    if (c == '\n') outbyte('\r');
     outbyte((unsigned char)c);
     return c;
 }

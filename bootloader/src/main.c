@@ -23,7 +23,7 @@ void read_cmd(char* cmd) {
         }
         now_cur++;
     }
-    printf("\r\n");
+    printf("\n");
     cmd[now_cur] = 0;
 }
 
@@ -40,11 +40,12 @@ void shell() {
     read_cmd(cmd);
     if (!strcmp(cmd, "help")) {
         printf(
-            "help      : print this help menu\r\n"
-            "hello     : print Hello World!\r\n"
-            "reboot    : reboot the device\r\n");
+            "help      : print this help menu\n"
+            "hello     : print Hello World!\n"
+            "load      : load img.!\n"
+            "reboot    : reboot the device\n");
     } else if (!strcmp(cmd, "hello")) {
-        printf("Hello World!\r\n");
+        printf("Hello World!\n");
     } else if (!strcmp(cmd, "reboot")) {
         reset(10);
     } else if (!strcmp(cmd, "clear")) {
@@ -55,7 +56,7 @@ void shell() {
         load_img(size);
         ((void (*)())(0x80000))();
     } else {
-        printf("command not found: %s\r\n", cmd);
+        printf("command not found: %s\n", cmd);
     }
 }
 
