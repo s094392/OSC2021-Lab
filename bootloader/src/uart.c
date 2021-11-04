@@ -71,5 +71,5 @@ unsigned char inbyte() {
     /* read it and return */
     r = (char)(*AUX_MU_IO);
     /* convert carrige return to newline */
-    return r == '\r' ? '\n' : r;
+    return r;
 }

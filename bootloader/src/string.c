@@ -161,3 +161,9 @@ int strncmp(char *s1, char *s2, size_t n) {
     } while (--n && *s1 != 0 && *s2 != 0);
     return value;
 }
+
+int atoi(char *str) {
+    int res = 0;
+    for (int i = 0; str[i] != '\0'; ++i) res = res * 10 + str[i] - '0';
+    return res;
+}

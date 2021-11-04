@@ -35,7 +35,8 @@
 //     this list of conditions and the following disclaimer in the documentation
 //     and/or other materials provided with the distribution.
 //
-//  3. Neither the name of the copyright holder nor the names of its contributors
+//  3. Neither the name of the copyright holder nor the names of its
+//  contributors
 //     may be used to endorse or promote products derived from this software
 //     without specific prior written permission.
 //
@@ -64,7 +65,8 @@ char *strcpy(char *dst, char *src);
 char *strncpy(char *d, char *s, size_t n);
 char *strcat(char *d, char *s);
 char *strncat(char *d, char *s, size_t n);
-int  strcmp(char *s1, char *s2);
-int  strncmp(char *d, char *s, size_t n);
+int strcmp(char *s1, char *s2);
+int strncmp(char *d, char *s, size_t n);
+int atoi(char *str);
 
 #endif

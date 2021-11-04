@@ -23,8 +23,15 @@ void read_cmd(char* cmd) {
         }
         now_cur++;
     }
-    printf("\n");
+    printf("\r\n");
     cmd[now_cur] = 0;
+}
+
+void load_img(int size) {
+    unsigned char* base = (unsigned char*)0x80000;
+    for (int i = 0; i < size; i++) {
+        base[i] = inbyte();
+    }
 }
 
 void shell() {
@@ -33,8 +40,8 @@ void shell() {
     read_cmd(cmd);
     if (!strcmp(cmd, "help")) {
         printf(
-            "help      : print this help menu\n"
-            "hello     : print Hello World!\n"
+            "help      : print this help menu\r\n"
+            "hello     : print Hello World!\r\n"
             "reboot    : reboot the device\r\n");
     } else if (!strcmp(cmd, "hello")) {
         printf("Hello World!\r\n");
@@ -43,6 +50,10 @@ void shell() {
     } else if (!strcmp(cmd, "clear")) {
         printf("\033[2J\033[1;1H");
     } else if (!strcmp(cmd, "load")) {
+        read_cmd(cmd);
+        int size = atoi(cmd);
+        load_img(size);
+        ((void (*)())(0x80000))();
     } else {
         printf("command not found: %s\r\n", cmd);
     }

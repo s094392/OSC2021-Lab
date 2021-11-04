@@ -75,7 +75,10 @@ FILE *stderr = &_stderr;
 // =============================================================================
 //  Standard C stdio functions that call outbyte/inbyte.
 // =============================================================================
-inline char getchar(void) { return (int)inbyte(); }
+inline char getchar(void) {
+    char r = inbyte();
+    return r == '\r' ? '\n' : r;
+}
 
 char *fgets(char *s, int n, FILE *stream) {
     char *rtn = s;
