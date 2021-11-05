@@ -1,6 +1,7 @@
 compile_flags.txt
 kernel8.elf
 kernel8.img
+bootloader.img
 
 # Created by https://www.toptal.com/developers/gitignore/api/vim,c
 # Edit at https://www.toptal.com/developers/gitignore?templates=vim,c

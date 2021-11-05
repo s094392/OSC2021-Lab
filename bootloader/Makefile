@@ -12,10 +12,10 @@ C_SRCS = $(wildcard $(SDIR)/*.c)
 S_OBJS = $(S_SRCS:$(SDIR)/%.S=$(BDIR)/%.asmo)
 C_OBJS = $(C_SRCS:$(SDIR)/%.c=$(BDIR)/%.o)
 
-all: clean kernel8.img
+all: clean bootloader.img
 
-kernel8.img: kernel8.elf
-	$(OBJCOPY) -O binary kernel8.elf kernel8.img
+bootloader.img: kernel8.elf
+	$(OBJCOPY) -O binary kernel8.elf bootloader.img
 
 kernel8.elf: $(S_OBJS) linker.ld $(C_OBJS)
 	$(LD) -T linker.ld -o kernel8.elf $(S_OBJS) $(C_OBJS)
@@ -27,13 +27,13 @@ $(BDIR)/%.asmo: $(SDIR)/%.S
 	$(CC) -c $< -o $@
 
 clean:
-	rm -f $(BDIR)/*.asmo $(BDIR)/*.o kernel8.elf kernel8.img
+	rm -f $(BDIR)/*.asmo $(BDIR)/*.o kernel8.elf bootloader.img
 
 run: all
-	qemu-system-aarch64 -M raspi3 -kernel kernel8.img -display none -serial null -serial stdio
+	qemu-system-aarch64 -M raspi3 -kernel bootloader.img -display none -serial null -serial stdio
 
 tty: all
-	qemu-system-aarch64 -M raspi3 -kernel kernel8.img -display none -serial null -serial "pty"
+	qemu-system-aarch64 -M raspi3 -kernel bootloader.img -display none -serial null -serial "pty"
 
 debug: all
 	tilix -a app-new-session -e "qemu-system-aarch64 -M raspi3 -kernel kernel8.img -display none -serial null -serial stdio -s -S" 

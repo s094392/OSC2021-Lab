@@ -24,8 +24,11 @@ def bytes_from_file(filename, chunksize=8192):
 
 
 with serial.Serial(port, baudrate) as ser:
+    ser.write("\n\nreboot\n".encode())
+    time.sleep(3)
+    ser.write("\n\nload\n".encode())
+
     size = os.path.getsize(filename)
-    ser.write("\nload\n".encode())
     print(f'Image size is {size}')
     time.sleep(0.1)
 

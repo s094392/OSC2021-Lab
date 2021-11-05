@@ -1,8 +1,9 @@
+#include "cpio.h"
 #include "reset.h"
 #include "stdio.h"
 #include "string.h"
 
-void read_cmd(char *cmd) {
+void read_string(char* cmd) {
     char now;
     cmd[0] = 0;
     int now_cur = 0;
@@ -28,7 +29,7 @@ void read_cmd(char *cmd) {
 void shell() {
     printf("# ");
     char cmd[256];
-    read_cmd(cmd);
+    read_string(cmd);
     if (!strcmp(cmd, "help")) {
         printf(
             "help      : print this help menu\n"
@@ -39,6 +40,12 @@ void shell() {
         printf("Hello World!\n");
     } else if (!strcmp(cmd, "reboot")) {
         reset(10);
+    } else if (!strcmp(cmd, "ls")) {
+        cpio_list();
+    } else if (!strcmp(cmd, "cat")) {
+        read_string(cmd);
+        void* file = get_cpio_file(cmd);
+        printf("%s\n", (char*)get_file_data(file));
     } else if (!strcmp(cmd, "clear")) {
         printf("\033[2J\033[1;1H");
     } else {
