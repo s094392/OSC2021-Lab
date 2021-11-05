@@ -2,6 +2,14 @@
 #define DTB_H
 #include <stdint.h>
 
+#define FDT_BEGIN_NODE 0x1 /* Start node: full name */
+#define FDT_END_NODE 0x2   /* End node */
+#define FDT_PROP                           \
+    0x3             /* Property: name off, \
+                       size, content */
+#define FDT_NOP 0x4 /* nop */
+#define FDT_END 0x9
+
 struct fdt_header {
     uint32_t magic;
     uint32_t totalsize;
@@ -18,6 +26,13 @@ struct fdt_header {
 struct fdt_node_header {
     uint32_t tag;
     char name[0];
+};
+
+struct fdt_property {
+    uint32_t tag;
+    uint32_t len;
+    uint32_t nameoff;
+    char data[0];
 };
 
 #endif
