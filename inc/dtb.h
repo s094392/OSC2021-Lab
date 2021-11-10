@@ -35,4 +35,6 @@ struct fdt_property {
     char data[0];
 };
 
+void* next_fdt_obj(const struct fdt_header* fdt, void* fdt_obj, int* depth);
+
 #endif
