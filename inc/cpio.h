@@ -1,5 +1,8 @@
 #ifndef CPIO_H
 #define CPIO_H
+#define pad(x, y) ((((x) + (y)-1) / (y)) * (y))
+
+extern void *cpio_addr;
 
 struct cpio_newc_header {
     char c_magic[6];

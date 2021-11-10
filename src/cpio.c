@@ -1,9 +1,8 @@
 #include "cpio.h"
 #include "stdio.h"
 #include "string.h"
-#define pad(x, y) ((((x) + (y)-1) / (y)) * (y))
 
-void *cpio_addr = (void *)0x20000000;
+void *cpio_addr;
 
 size_t atol_n(char *s, size_t len, size_t base) {
     if (base == 16) {

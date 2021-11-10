@@ -1,22 +1,21 @@
 #include <byteswap.h>
 
+#include "cpio.h"
 #include "dtb.h"
 #include "shell.h"
-#include "stdio.h"
 #include "string.h"
 #include "uart.h"
-#include "util.h"
-#define pad(x, y) ((((x) + (y)-1) / (y)) * (y))
+
+void get_initramfs(char* key, void* data, int len) {
+    if (!strncmp(key, "linux,initrd-start", 18)) {
+        cpio_addr = (void*)(size_t)__bswap_32(*(uint32_t*)data);
+    }
+}
 
 int init(struct fdt_header* fdt) {
     uart_init();
-    int depth = -1;
-    int offset = __bswap_32(fdt->off_dt_struct);
-    void* fdt_obj = (void*)((long)fdt + offset);
+    fdt_traverse(fdt, get_initramfs);
 
-    while (fdt_obj) {
-        fdt_obj = next_fdt_obj(fdt, fdt_obj, &depth);
-    }
     while (1) {
         shell();
     }

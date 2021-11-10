@@ -35,6 +35,9 @@ struct fdt_property {
     char data[0];
 };
 
-void* next_fdt_obj(const struct fdt_header* fdt, void* fdt_obj, int* depth);
+void* next_fdt_obj(const struct fdt_header* fdt, void* fdt_obj, int* depth,
+                   void (*callback)(char* key, void* data, int len));
+void fdt_traverse(struct fdt_header* fdt,
+                  void (*callback)(char* key, void* data, int len));
 
 #endif

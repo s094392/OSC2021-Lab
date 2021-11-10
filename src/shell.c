@@ -34,7 +34,7 @@ void shell() {
         printf(
             "help      : print this help menu\n"
             "hello     : print Hello World!\n"
-            "clear     : clear the screen!\n"
+            /*"clear     : clear the screen!\n"*/
             "reboot    : reboot the device\n");
     } else if (!strcmp(cmd, "hello")) {
         printf("Hello World!\n");
@@ -43,6 +43,7 @@ void shell() {
     } else if (!strcmp(cmd, "ls")) {
         cpio_list();
     } else if (!strcmp(cmd, "cat")) {
+        printf("Filename: ");
         read_string(cmd);
         void* file = get_cpio_file(cmd);
         printf("%s\n", (char*)get_file_data(file));
