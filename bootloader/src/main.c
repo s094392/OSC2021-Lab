@@ -34,7 +34,7 @@ void load_img(int size) {
     }
 }
 
-void shell() {
+void shell(unsigned long* fdt) {
     printf("# ");
     char cmd[256];
     read_cmd(cmd);
@@ -54,7 +54,7 @@ void shell() {
         read_cmd(cmd);
         int size = atoi(cmd);
         load_img(size);
-        ((void (*)())(0x80000))();
+        ((void (*)(void* fdt))(0x80000))(fdt);
     } else {
         printf("command not found: %s\n", cmd);
     }
@@ -67,15 +67,14 @@ void move(char* base_start, char* start, char* bootloader_end) {
     }
 }
 
-int main() {
-    while (1) shell();
+int nmain(void* fdt) {
+    while (1) shell(fdt);
 }
 
-void _load() {
+void _load(void* fdt) {
     uart_init();
     char* base_start = (char*)0x60000;
     char* bootloader_start = (char*)0x80000;
     move(base_start, bootloader_start, (char*)&_end);
-    ((void (*)())((char*)main - bootloader_start + base_start))();
-    main();
+    ((void (*)(void* fdt))((char*)nmain - bootloader_start + base_start))(fdt);
 }

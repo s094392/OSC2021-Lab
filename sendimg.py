@@ -7,8 +7,10 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("input", help="the input file")
 parser.add_argument("tty", help="the target tty")
-parser.add_argument("-b", "--baudrate",
-                    help="serial baudrate, the default value is 115200", default=115200)
+parser.add_argument("-b",
+                    "--baudrate",
+                    help="serial baudrate, the default value is 115200",
+                    default=115200)
 
 args = parser.parse_args()
 
@@ -24,8 +26,8 @@ def bytes_from_file(filename, chunksize=8192):
 
 
 with serial.Serial(port, baudrate) as ser:
-    ser.write("\n\nreboot\n".encode())
-    time.sleep(3)
+    # ser.write("\n\nreboot\n".encode())
+    time.sleep(2)
     ser.write("\n\nload\n".encode())
 
     size = os.path.getsize(filename)
@@ -35,5 +37,6 @@ with serial.Serial(port, baudrate) as ser:
     res = f"{size}\n"
     ser.write(res.encode())
     img = bytes_from_file(filename)
+    time.sleep(0.1)
     ser.write(img)
     print("done")

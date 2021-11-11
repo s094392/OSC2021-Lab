@@ -11,10 +11,11 @@ S_SRCS = $(wildcard $(SDIR)/*.S)
 C_SRCS = $(wildcard $(SDIR)/*.c)
 S_OBJS = $(S_SRCS:$(SDIR)/%.S=$(BDIR)/%.asmo)
 C_OBJS = $(C_SRCS:$(SDIR)/%.c=$(BDIR)/%.o)
+QEMU = qemu-system-aarch64 -M raspi3 -dtb bcm2710-rpi-3-b.dtb -kernel kernel8.img -display none -serial null
 
-all: clean bootloader.img
+all: clean kernel8.img
 
-bootloader.img: kernel8.elf
+kernel8.img: kernel8.elf
 	$(OBJCOPY) -O binary kernel8.elf bootloader.img
 
 kernel8.elf: $(S_OBJS) linker.ld $(C_OBJS)
@@ -30,15 +31,15 @@ clean:
 	rm -f $(BDIR)/*.asmo $(BDIR)/*.o kernel8.elf bootloader.img
 
 run: all
-	qemu-system-aarch64 -M raspi3 -kernel bootloader.img -display none -serial null -serial stdio
+	$(QEMU) -serial stdio
 
 tty: all
-	qemu-system-aarch64 -M raspi3 -kernel bootloader.img -display none -serial null -serial "pty"
+	$(QEMU) -serial "pty"
 
 debug: all
-	tilix -a app-new-session -e "qemu-system-aarch64 -M raspi3 -kernel kernel8.img -display none -serial null -serial stdio -s -S" 
+	tilix -a app-new-session -e "$(QEMU) -serial stdio -s -S" 
 	tilix -a app-new-session -e "aarch64-linux-gnu-gdb  --se=kernel8.elf -ex 'file kernel8.elf' -ex 'target remote localhost:1234'"
 
 debugtmux: all
-	tmux new-window -d "qemu-system-aarch64 -M raspi3 -kernel kernel8.img -display none -serial null -serial stdio -s -S"
+	tmux new-window -d "$(QEMU) -serial stdio -s -S"
 	tmux new-window -d "aarch64-linux-gnu-gdb  --se=kernel8.elf -ex 'file kernel8.elf' -ex 'target remote localhost:1234'"
