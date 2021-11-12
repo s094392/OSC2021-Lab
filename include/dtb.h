@@ -1,5 +1,6 @@
 #ifndef DTB_H
 #define DTB_H
+
 #include <stdint.h>
 
 #define FDT_BEGIN_NODE 0x1 /* Start node: full name */

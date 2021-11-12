@@ -26,17 +26,16 @@ def bytes_from_file(filename, chunksize=8192):
 
 
 with serial.Serial(port, baudrate) as ser:
-    # ser.write("\n\nreboot\n".encode())
     time.sleep(2)
     ser.write("\n\nload\n".encode())
 
     size = os.path.getsize(filename)
     print(f'Image size is {size}')
-    time.sleep(0.1)
+    time.sleep(0.2)
 
     res = f"{size}\n"
     ser.write(res.encode())
     img = bytes_from_file(filename)
-    time.sleep(0.1)
+    time.sleep(0.2)
     ser.write(img)
     print("done")

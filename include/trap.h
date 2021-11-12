@@ -1,3 +1,6 @@
+#ifndef TRAP_H
+#define TRAP_H
+
 #include <stdint.h>
 int get_current_el();
 struct trap_frame_t {
@@ -33,3 +36,5 @@ struct trap_frame_t {
     uint64_t x1;
     uint64_t x0;
 };
+
+#endif
