@@ -76,7 +76,7 @@ FILE *stderr = &_stderr;
 //  Standard C stdio functions that call outbyte/inbyte.
 // =============================================================================
 inline char getchar(void) {
-    char r = inbyte();
+    char r = (int)inbyte();
     return r == '\r' ? '\n' : r;
 }
 
@@ -111,7 +111,7 @@ int fputs(const char *str, FILE *stream) {
     return putchar('\n');
 }
 
-int puts(const char *str) { return fputs(str, stdout); }
+int puts(const char *str) { return fputs(str, &_stdout); }
 
 void putd(int num, int prefix_zeros, int positive) {
     unsigned int divisor = 1000000000; /* only for 32-bit integer */
@@ -150,28 +150,10 @@ void putx(unsigned int num, int upper_case, int prefix_zeros) {
     }
 }
 
-void putf(double f, int ndecimal) {
-    double num = f;
-    int integer, fractions;
-    int idx, power = 1;
-
-    if (num < 0.0) num = -num, putchar('-');
-    integer = (int)num; /* only an approximation of floor(). */
-    for (idx = 0; idx < ndecimal; idx++) power = power * 10;
-    fractions = (int)((num - integer) * power + 0.5);
-    for (idx = ndecimal; idx > 0; idx--) {
-        if (fractions / power != 0) break;
-        power = power / 10;
-    }
-    (integer) ? putd(integer, 0, 1) : putchar('0');
-    putchar('.');
-    putd(fractions, ndecimal - idx - 1, 1);
-}
-
 int printf(char *fmt, ...) {
     char *str;
     va_list ap;
-    int nd = 6, positive = 0;
+    int positive = 0;
     int prefix_zeros = 0;
 
     for (va_start(ap, fmt); *fmt; fmt++) {
@@ -184,12 +166,6 @@ int printf(char *fmt, ...) {
                 fmt++;
             }
             if (*fmt == 'l') fmt++; /* skip, do nothing */
-            if (*fmt == '.') {
-                fmt++;
-                nd = (*fmt - '0') % 10;
-                fmt++;
-                while (*fmt >= '0' && *fmt <= '9') fmt++; /* skip, do nothing */
-            }
 
             switch (*fmt) {
                 case 'x':
@@ -202,10 +178,6 @@ int printf(char *fmt, ...) {
 
                 case 'd':
                     putd(va_arg(ap, int), 0, positive);
-                    break;
-
-                case 'f':
-                    putf(va_arg(ap, double), nd);
                     break;
 
                 case 's':

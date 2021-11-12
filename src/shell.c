@@ -2,6 +2,7 @@
 #include "reset.h"
 #include "stdio.h"
 #include "string.h"
+#include "trap.h"
 
 void read_string(char* cmd) {
     char now;
@@ -34,12 +35,19 @@ void shell() {
         printf(
             "help      : print this help menu\n"
             "hello     : print Hello World!\n"
-            /*"clear     : clear the screen!\n"*/
+            "clear     : clear the screen!\n"
+            "ls        : list files\n"
+            "cat       : cat files\n"
+            "cur       : print current el\n"
             "reboot    : reboot the device\n");
     } else if (!strcmp(cmd, "hello")) {
         printf("Hello World!\n");
     } else if (!strcmp(cmd, "reboot")) {
         reset(10);
+    } else if (!strcmp(cmd, "timer")) {
+        asm volatile("svc 1");
+    } else if (!strcmp(cmd, "exc")) {
+        asm volatile("svc 0");
     } else if (!strcmp(cmd, "ls")) {
         cpio_list();
     } else if (!strcmp(cmd, "cat")) {

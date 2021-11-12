@@ -28,3 +28,4 @@ _start:
 4:  bl      init
     // for failsafe, halt this core too
     b       1b
+

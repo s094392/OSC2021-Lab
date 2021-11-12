@@ -2,16 +2,17 @@ SHELL = /bin/sh
 ARM = aarch64-linux-gnu
 CC = $(ARM)-gcc
 LD = $(ARM)-ld
-IDIR = inc
+IDIR = include
 SDIR = src
 BDIR = build
-CFLAGS = -Wall -I $(IDIR) -O0 -g
+CFLAGS = -Wall -I $(IDIR) -O0 -mgeneral-regs-only -g
 OBJCOPY = $(ARM)-objcopy
 S_SRCS = $(wildcard $(SDIR)/*.S)
 C_SRCS = $(wildcard $(SDIR)/*.c)
 S_OBJS = $(S_SRCS:$(SDIR)/%.S=$(BDIR)/%.asmo)
 C_OBJS = $(C_SRCS:$(SDIR)/%.c=$(BDIR)/%.o)
 QEMU = qemu-system-aarch64 -M raspi3 -dtb bcm2710-rpi-3-b.dtb -initrd initramfs.cpio -kernel kernel8.img -display none -serial null
+GDB = aarch64-linux-gnu-gdb  --se=kernel8.elf -ex 'file kernel8.elf' -ex 'target remote localhost:1234'
 
 all: clean kernel8.img
 
@@ -38,8 +39,8 @@ tty: all
 
 debug: all
 	tilix -a app-new-session -e "$(QEMU) -serial stdio -s -S" 
-	tilix -a app-new-session -e "aarch64-linux-gnu-gdb  --se=kernel8.elf -ex 'file kernel8.elf' -ex 'target remote localhost:1234'"
+	tilix -a app-new-session -e "$(GDB)"
 
 debugtmux: all
 	tmux new-window -d "$(QEMU) -serial stdio -s -S"
-	tmux new-window -d "aarch64-linux-gnu-gdb  --se=kernel8.elf -ex 'file kernel8.elf' -ex 'target remote localhost:1234'"
+	tmux new-window -d "$(GDB)"
