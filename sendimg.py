@@ -31,11 +31,11 @@ with serial.Serial(port, baudrate) as ser:
 
     size = os.path.getsize(filename)
     print(f'Image size is {size}')
-    time.sleep(0.2)
+    time.sleep(1)
 
     res = f"{size}\n"
     ser.write(res.encode())
     img = bytes_from_file(filename)
-    time.sleep(0.2)
+    time.sleep(1)
     ser.write(img)
     print("done")

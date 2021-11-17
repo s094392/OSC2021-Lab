@@ -1,9 +1,6 @@
 #ifndef MBOX_H
 #define MBOX_H
 
-int mbox_call(unsigned char ch);
-extern volatile unsigned int mbox[36];
-
 #define MBOX_REQUEST 0
 
 /* channels */
@@ -21,6 +18,30 @@ extern volatile unsigned int mbox[36];
 #define MBOX_TAG_GETSERIAL 0x10004
 #define MBOX_TAG_LAST 0
 
-int mbox_call(unsigned char ch);
+#define VIDEOCORE_MBOX (MMIO_BASE + 0x0000B880)
+#define MBOX_READ ((volatile unsigned int*)(VIDEOCORE_MBOX + 0x0))
+#define MBOX_POLL ((volatile unsigned int*)(VIDEOCORE_MBOX + 0x10))
+#define MBOX_SENDER ((volatile unsigned int*)(VIDEOCORE_MBOX + 0x14))
+#define MBOX_STATUS ((volatile unsigned int*)(VIDEOCORE_MBOX + 0x18))
+#define MBOX_CONFIG ((volatile unsigned int*)(VIDEOCORE_MBOX + 0x1C))
+#define MBOX_WRITE ((volatile unsigned int*)(VIDEOCORE_MBOX + 0x20))
+#define MBOX_RESPONSE 0x80000000
+#define MBOX_FULL 0x80000000
+#define MBOX_EMPTY 0x40000000
+
+#define GET_BOARD_REVISION 0x00010002
+#define GET_MEMORY 0x00010005
+#define REQUEST_CODE 0x00000000
+#define REQUEST_SUCCEED 0x80000000
+#define REQUEST_FAILED 0x80000001
+#define TAG_REQUEST_CODE 0x00000000
+#define END_TAG 0x00000000
+
+#define GET_VC_MEMORY 0x00010006
+#define UART_ID 0x000000002
+
+int mbox_call(unsigned char ch, unsigned int* mbox);
+void get_board_revision();
+void get_memory();
 
 #endif
