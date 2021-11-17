@@ -32,7 +32,6 @@ void init(struct fdt_header *fdt) {
 
     get_board_revision();
     get_memory();
-    lfb();
     el2_entry();
     el1_entry();
     user();

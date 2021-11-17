@@ -11,8 +11,8 @@ S_SRCS = $(wildcard $(SDIR)/*.S)
 C_SRCS = $(wildcard $(SDIR)/*.c)
 S_OBJS = $(S_SRCS:$(SDIR)/%.S=$(BDIR)/%.asmo)
 C_OBJS = $(C_SRCS:$(SDIR)/%.c=$(BDIR)/%.o)
-QEMU = qemu-system-aarch64 -M raspi3 -dtb bcm2710-rpi-3-b.dtb -initrd initramfs.cpio -kernel kernel8.img -serial null
-#QEMU = qemu-system-aarch64 -M raspi3 -dtb bcm2710-rpi-3-b.dtb -initrd initramfs.cpio -kernel kernel8.img -display none -serial null
+QEMU_DISPLAY = qemu-system-aarch64 -M raspi3 -dtb bcm2710-rpi-3-b.dtb -initrd initramfs.cpio -kernel kernel8.img -serial null
+QEMU = qemu-system-aarch64 -M raspi3 -dtb bcm2710-rpi-3-b.dtb -initrd initramfs.cpio -kernel kernel8.img -display none -serial null
 GDB = aarch64-linux-gnu-gdb  --se=kernel8.elf -ex 'file kernel8.elf' -ex 'target remote localhost:1234'
 
 all: clean kernel8.img
@@ -34,6 +34,9 @@ clean:
 
 run: all
 	$(QEMU) -serial stdio
+
+rundisplay: all
+	$(QEMU_DISPLAY) -serial stdio
 
 tty: all
 	$(QEMU) -serial "pty"

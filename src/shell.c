@@ -1,4 +1,5 @@
 #include "cpio.h"
+#include "mbox.h"
 #include "reset.h"
 #include "stdio.h"
 #include "string.h"
@@ -50,6 +51,8 @@ void shell() {
         asm volatile("svc 0");
     } else if (!strcmp(cmd, "ls")) {
         cpio_list();
+    } else if (!strcmp(cmd, "show")) {
+        lfb();
     } else if (!strcmp(cmd, "cat")) {
         printf("Filename: ");
         read_string(cmd);
