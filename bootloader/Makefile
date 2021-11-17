@@ -40,6 +40,10 @@ debug: all
 	tilix -a app-new-session -e "$(QEMU) -serial stdio -s -S" 
 	tilix -a app-new-session -e "aarch64-linux-gnu-gdb  --se=kernel8.elf -ex 'file kernel8.elf' -ex 'target remote localhost:1234'"
 
+debugtty: all
+	tilix -a app-new-session -e "$(QEMU) -serial pty -s -S" 
+	tilix -a app-new-session -e "aarch64-linux-gnu-gdb  --se=kernel8.elf -ex 'file kernel8.elf' -ex 'target remote localhost:1234'"
+
 debugtmux: all
 	tmux new-window -d "$(QEMU) -serial stdio -s -S"
 	tmux new-window -d "aarch64-linux-gnu-gdb  --se=kernel8.elf -ex 'file kernel8.elf' -ex 'target remote localhost:1234'"

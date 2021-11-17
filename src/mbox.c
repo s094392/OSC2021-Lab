@@ -1,4 +1,5 @@
 #include "gpio.h"
+#include "img.h"
 #include "mbox.h"
 #include "stdio.h"
 
@@ -76,8 +77,8 @@ void get_board_revision() {
  */
 void lfb() {
     unsigned int __attribute__((aligned(16))) mbox[36];
-    unsigned int width, height; /* dimensions and channel order */
-    unsigned char *lfb;         /* raw frame buffer address */
+    unsigned int width, height, pitch, isrgb; /* dimensions and channel order */
+    unsigned char *lfb;                       /* raw frame buffer address */
 
     mbox[0] = 35 * 4;
     mbox[1] = MBOX_REQUEST;
@@ -129,24 +130,35 @@ void lfb() {
         mbox[28] &= 0x3FFFFFFF;  // convert GPU address to ARM address
         width = mbox[5];         // get actual physical width
         height = mbox[6];        // get actual physical height
-        /*pitch = mbox[33];        // get number of bytes per line*/
-        /*isrgb = mbox[24];        // get the actual channel order*/
+        pitch = mbox[33];        // get number of bytes per line
+        isrgb = mbox[24];        // get the actual channel order
         lfb = (void *)((unsigned long)mbox[28]);
     } else {
         /*uart_puts("Unable to set screen resolution to 1024x768x32\n");*/
     }
 
     int x, y;
-    unsigned char *ptr = lfb;
+    while (1) {
+        for (int frame_id = 0; frame_id < img_frames; frame_id++) {
+            unsigned char *ptr = lfb;
+            char *data = header_data[frame_id], pixel[4];
 
-    for (y = 0; y < height; y++) {
-        for (x = 0; x < width; x++) {
-            if (x / 10 % 2 ^ y / 10 % 2)
-                *((unsigned int *)ptr) =
-                    (unsigned int)(255 << 16 | 255 << 8 | 255);
-            else
-                *((unsigned int *)ptr) = (unsigned int)(0 << 16 | 0 << 8 | 0);
-            ptr += 4;
+            ptr += (height - img_height) / 2 * pitch + (width - img_width) * 2;
+            for (y = 0; y < img_height; y++) {
+                for (x = 0; x < img_width; x++) {
+                    HEADER_PIXEL(data, pixel);
+                    // the image is in RGB. So if we have an RGB framebuffer, we
+                    // can copy the pixels directly, but for BGR we must swap R
+                    // (pixel[0]) and B (pixel[2]) channels.
+                    *((unsigned int *)ptr) =
+                        isrgb ? *((unsigned int *)&pixel)
+                              : (unsigned int)(pixel[0] << 16 | pixel[1] << 8 |
+                                               pixel[2]);
+                    ptr += 4;
+                }
+                ptr += pitch - img_width * 4;
+            }
+            for (int i = 0; i < 150000; i++) asm volatile("nop");
         }
     }
 }

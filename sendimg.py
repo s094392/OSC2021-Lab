@@ -18,13 +18,6 @@ filename = args.input
 port = args.tty
 baudrate = args.baudrate
 
-
-def bytes_from_file(filename, chunksize=8192):
-    with open(filename, "rb") as f:
-        chunk = f.read(chunksize)
-        return chunk
-
-
 with serial.Serial(port, baudrate) as ser:
     time.sleep(2)
     ser.write("\n\nload\n".encode())
@@ -35,7 +28,6 @@ with serial.Serial(port, baudrate) as ser:
 
     res = f"{size}\n"
     ser.write(res.encode())
-    img = bytes_from_file(filename)
     time.sleep(1)
-    ser.write(img)
+    ser.write(open(filename, "rb").read())
     print("done")

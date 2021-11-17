@@ -43,5 +43,6 @@
 int mbox_call(unsigned char ch, unsigned int* mbox);
 void get_board_revision();
 void get_memory();
+void lfb();
 
 #endif
