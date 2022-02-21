@@ -10,9 +10,8 @@
  */
 
 int mbox_call(unsigned char ch, unsigned int *mbox) {
-    unsigned int r =
-        (((unsigned int)((unsigned long)mbox) & ~0xF) | (ch & 0xF));
-    /* wait until we can write to the mailbox */
+    unsigned int r = (((unsigned int)((unsigned long)mbox) & ~0xF) |
+                      (ch & 0xF)); /* wait until we can write to the mailbox */
     do {
         asm volatile("nop");
     } while (*MBOX_STATUS & MBOX_FULL);
