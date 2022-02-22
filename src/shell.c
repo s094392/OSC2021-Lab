@@ -1,3 +1,4 @@
+#include "alloc.h"
 #include "cpio.h"
 #include "mbox.h"
 #include "reset.h"
@@ -53,6 +54,9 @@ void shell() {
         cpio_list();
     } else if (!strcmp(cmd, "show")) {
         lfb();
+    } else if (!strcmp(cmd, "salloc")) {
+        void* ptr = simple_alloc(1);
+        printf("%lx\n", (uint64_t)ptr);
     } else if (!strcmp(cmd, "cat")) {
         printf("Filename: ");
         read_string(cmd);

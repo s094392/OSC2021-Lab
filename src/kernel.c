@@ -1,6 +1,7 @@
 #include <byteswap.h>
 #include <stdarg.h>
 
+#include "alloc.h"
 #include "cpio.h"
 #include "dtb.h"
 #include "mbox.h"
@@ -32,6 +33,7 @@ void init(struct fdt_header *fdt) {
 
     get_board_revision();
     get_memory();
+    simple_alloc_init();
     el2_entry();
     el1_entry();
     user();
