@@ -56,108 +56,108 @@
 #include <string.h>
 
 void *memcpy(void *d, void *s, size_t n) {
-    unsigned char *dst = (unsigned char *)d;
-    unsigned char *src = (unsigned char *)s;
+  unsigned char *dst = (unsigned char *)d;
+  unsigned char *src = (unsigned char *)s;
 
-    for (int idx = 0; idx < n; idx++) *(dst++) = *(src++);
-    return d;
+  for (int idx = 0; idx < n; idx++) *(dst++) = *(src++);
+  return d;
 }
 
 void *memmove(void *d, void *s, size_t n) {
-    unsigned char *dst = (unsigned char *)d;
-    unsigned char *src = (unsigned char *)s;
+  unsigned char *dst = (unsigned char *)d;
+  unsigned char *src = (unsigned char *)s;
 
-    if (d >= s && d <= s + n) {
-        for (int idx = n - 1; idx >= 0; idx--) dst[idx] = src[idx];
-    } else {
-        for (int idx = 0; idx < n; idx++) *(dst++) = *(src++);
-    }
+  if (d >= s && d <= s + n) {
+    for (int idx = n - 1; idx >= 0; idx--) dst[idx] = src[idx];
+  } else {
+    for (int idx = 0; idx < n; idx++) *(dst++) = *(src++);
+  }
 
-    return d;
+  return d;
 }
 
 void *memset(void *d, int v, size_t n) {
-    unsigned char *dst = (unsigned char *)d;
+  unsigned char *dst = (unsigned char *)d;
 
-    for (int idx = 0; idx < n; idx++) *(dst++) = (unsigned char)v;
-    return d;
+  for (int idx = 0; idx < n; idx++) *(dst++) = (unsigned char)v;
+  return d;
 }
 
 long strlen(char *s) {
-    long n = 0;
+  long n = 0;
 
-    while (*s++) n++;
-    return n;
+  while (*s++) n++;
+  return n;
 }
 
 char *strcpy(char *dst, char *src) {
-    char *tmp = dst;
+  char *tmp = dst;
 
-    while (*src) *(tmp++) = *(src++);
-    *tmp = 0;
-    return dst;
+  while (*src) *(tmp++) = *(src++);
+  *tmp = 0;
+  return dst;
 }
 
 char *strncpy(char *dst, char *src, size_t n) {
-    char *tmp = dst;
+  char *tmp = dst;
 
-    while (*src && n) *(tmp++) = *(src++), n--;
-    while (n--) *(tmp++) = 0;
-    return dst;
+  while (*src && n) *(tmp++) = *(src++), n--;
+  while (n--) *(tmp++) = 0;
+  return dst;
 }
 
 char *strcat(char *dst, char *src) {
-    char *tmp = dst;
+  char *tmp = dst;
 
-    while (*tmp) tmp++;
-    while (*src) *(tmp++) = *(src++);
-    *tmp = 0;
-    return dst;
+  while (*tmp) tmp++;
+  while (*src) *(tmp++) = *(src++);
+  *tmp = 0;
+  return dst;
 }
 
 char *strncat(char *dst, char *src, size_t n) {
-    char *tmp = dst;
+  char *tmp = dst;
 
-    while (*tmp) tmp++;
-    while (*src && n) *(tmp++) = *(src++), n--;
-    *tmp = 0;
-    return dst;
+  while (*tmp) tmp++;
+  while (*src && n) *(tmp++) = *(src++), n--;
+  *tmp = 0;
+  return dst;
 }
 
 int strcmp(char *s1, char *s2) {
-    int value;
+  int value;
 
-    s1--, s2--;
-    do {
-        s1++, s2++;
-        if (*s1 == *s2) {
-            value = 0;
-        } else if (*s1 < *s2) {
-            value = -1;
-            break;
-        } else {
-            value = 1;
-            break;
-        }
-    } while (*s1 != 0 && *s2 != 0);
-    return value;
+  s1--, s2--;
+  do {
+    s1++, s2++;
+    if (*s1 == *s2) {
+      value = 0;
+    } else if (*s1 < *s2) {
+      value = -1;
+      break;
+    } else {
+      value = 1;
+      break;
+    }
+  } while (*s1 != 0 && *s2 != 0);
+  return value;
 }
 
 int strncmp(char *s1, char *s2, size_t n) {
-    int value;
+  int value;
 
-    s1--, s2--;
-    do {
-        s1++, s2++;
-        if (*s1 == *s2) {
-            value = 0;
-        } else if (*s1 < *s2) {
-            value = -1;
-            break;
-        } else {
-            value = 1;
-            break;
-        }
-    } while (--n && *s1 != 0 && *s2 != 0);
-    return value;
+  s1--, s2--;
+  do {
+    s1++, s2++;
+    if (*s1 == *s2) {
+      value = 0;
+    } else if (*s1 < *s2) {
+      value = -1;
+      break;
+    } else {
+      value = 1;
+      break;
+    }
+  } while (--n && *s1 != 0 && *s2 != 0);
+  return value;
 }

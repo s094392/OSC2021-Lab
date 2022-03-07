@@ -76,121 +76,121 @@ FILE *stderr = &_stderr;
 //  Standard C stdio functions that call outbyte/inbyte.
 // =============================================================================
 inline char getchar(void) {
-    char r = (int)inbyte();
-    return r == '\r' ? '\n' : r;
+  char r = (int)inbyte();
+  return r == '\r' ? '\n' : r;
 }
 
 char *fgets(char *s, int n, FILE *stream) {
-    char *rtn = s;
-    if (stream != stdin) {
-        rtn = NULL;
-    } else {
-        while (n--) {
-            *s = (char)getchar();
-            if (*s == '\n' || *s == '\r') break;
-            putchar((int)*s);
-            s++;
-        }
-        putchar((int)'\n');
-        *s = 0;
+  char *rtn = s;
+  if (stream != stdin) {
+    rtn = NULL;
+  } else {
+    while (n--) {
+      *s = (char)getchar();
+      if (*s == '\n' || *s == '\r') break;
+      putchar((int)*s);
+      s++;
     }
-    return rtn;
+    putchar((int)'\n');
+    *s = 0;
+  }
+  return rtn;
 }
 
 inline int putchar(int c) {
-    if (c == '\n') outbyte('\r');
-    outbyte((unsigned char)c);
-    return c;
+  if (c == '\n') outbyte('\r');
+  outbyte((unsigned char)c);
+  return c;
 }
 
 int fputs(const char *str, FILE *stream) {
-    if (stream != stdout) {
-    } else {
-        while (*str) putchar(*str++);
-    }
-    return putchar('\n');
+  if (stream != stdout) {
+  } else {
+    while (*str) putchar(*str++);
+  }
+  return putchar('\n');
 }
 
 int puts(const char *str) { return fputs(str, &_stdout); }
 
 void putd(int num, int prefix_zeros, int positive) {
-    unsigned int divisor = 1000000000; /* only for 32-bit integer */
-    int digit, leading_zero = 1;
+  unsigned int divisor = 1000000000; /* only for 32-bit integer */
+  int digit, leading_zero = 1;
 
-    if (num == 0) {
-        putchar('0');
-        return;
-    } else if (!positive && num < 0)
-        num = -num, putchar('-');
+  if (num == 0) {
+    putchar('0');
+    return;
+  } else if (!positive && num < 0)
+    num = -num, putchar('-');
 
-    do {
-        digit = num / divisor;
-        if (digit) {
-            leading_zero = 0;
-            num = num - digit * divisor;
-        }
-        divisor /= 10;
-        if ((!leading_zero) || prefix_zeros) putchar(digit + '0');
-    } while (divisor);
+  do {
+    digit = num / divisor;
+    if (digit) {
+      leading_zero = 0;
+      num = num - digit * divisor;
+    }
+    divisor /= 10;
+    if ((!leading_zero) || prefix_zeros) putchar(digit + '0');
+  } while (divisor);
 }
 
 void putx(unsigned int num, int upper_case, int prefix_zeros) {
-    char *HEX[2] = {"0123456789abcdef", "0123456789ABCDEF"};
-    int digit, leading_zero = 1;
+  char *HEX[2] = {"0123456789abcdef", "0123456789ABCDEF"};
+  int digit, leading_zero = 1;
 
-    upper_case = upper_case % 2;
-    for (int idx = 8; idx > 0; idx--) /* only for 32-bit integer */
-    {
-        digit = num >> ((idx - 1) * 4);
-        if (digit) {
-            leading_zero = 0;
-            num = (num << ((9 - idx) * 4)) >> ((9 - idx) * 4);
-        }
-        if ((!leading_zero) || prefix_zeros) putchar(HEX[upper_case][digit]);
+  upper_case = upper_case % 2;
+  for (int idx = 8; idx > 0; idx--) /* only for 32-bit integer */
+  {
+    digit = num >> ((idx - 1) * 4);
+    if (digit) {
+      leading_zero = 0;
+      num = (num << ((9 - idx) * 4)) >> ((9 - idx) * 4);
     }
+    if ((!leading_zero) || prefix_zeros) putchar(HEX[upper_case][digit]);
+  }
 }
 
 int printf(char *fmt, ...) {
-    char *str;
-    va_list ap;
-    int positive = 0;
-    int prefix_zeros = 0;
+  char *str;
+  va_list ap;
+  int positive = 0;
+  int prefix_zeros = 0;
 
-    for (va_start(ap, fmt); *fmt; fmt++) {
-        if (*fmt == '%') {
-            fmt++;
-            if (*fmt == '0') prefix_zeros = 1;
-            while (*fmt >= '0' && *fmt <= '9') fmt++; /* skip, do nothing */
-            if (*fmt == 'u') {
-                positive = 1;
-                fmt++;
-            }
-            if (*fmt == 'l') fmt++; /* skip, do nothing */
+  for (va_start(ap, fmt); *fmt; fmt++) {
+    if (*fmt == '%') {
+      fmt++;
+      if (*fmt == '0') prefix_zeros = 1;
+      while (*fmt >= '0' && *fmt <= '9') fmt++; /* skip, do nothing */
+      if (*fmt == 'u') {
+        positive = 1;
+        fmt++;
+      }
+      if (*fmt == 'l') fmt++; /* skip, do nothing */
 
-            switch (*fmt) {
-                case 'x':
-                    putx(va_arg(ap, int), 0, prefix_zeros);
-                    break;
+      switch (*fmt) {
+        case 'x':
+          putx(va_arg(ap, int), 0, prefix_zeros);
+          break;
 
-                case 'X':
-                    putx(va_arg(ap, int), 1, prefix_zeros);
-                    break;
+        case 'X':
+          putx(va_arg(ap, int), 1, prefix_zeros);
+          break;
 
-                case 'd':
-                    putd(va_arg(ap, int), 0, positive);
-                    break;
+        case 'd':
+          putd(va_arg(ap, int), 0, positive);
+          break;
 
-                case 's':
-                    str = va_arg(ap, char *);
-                    while (*str) putchar(*str++);
-                    break;
+        case 's':
+          str = va_arg(ap, char *);
+          while (*str) putchar(*str++);
+          break;
 
-                default:
-                    putchar(*fmt);
-            }
-        } else
-            putchar(*fmt);
-    }
-    va_end(ap);
-    return 0;
+        default:
+          putchar(*fmt);
+      }
+    } else
+      putchar(*fmt);
+  }
+  va_end(ap);
+  return 0;
 }

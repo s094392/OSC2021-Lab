@@ -61,8 +61,8 @@
 #define EOF -1
 
 typedef struct { /* dummy type for now */
-    int fd;
-    int ostat;
+  int fd;
+  int ostat;
 } FILE;
 
 extern FILE *stdin;
