@@ -10,16 +10,17 @@
 #define USED_FRAME -2
 
 struct page {
-  struct list_head list;
   int val;
+  struct list_head list;
 };
 
 extern char _end;
 extern void *simple_alloc_offset;
-extern int *frame_array;
+extern struct page *frame_array;
 
 void simple_alloc_init();
 void *simple_alloc(size_t size);
 void buddy_system_init();
+struct page *page_alloc(int order);
 
 #endif

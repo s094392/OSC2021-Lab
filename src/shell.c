@@ -6,14 +6,14 @@
 #include "string.h"
 #include "trap.h"
 
-void read_string(char* cmd) {
+void read_string(char *cmd) {
   char now;
   cmd[0] = 0;
   int now_cur = 0;
   while ((now = getchar()) != '\n') {
     if ((int)now == 240) {
       continue;
-    } else if (now == 127) {  // delete
+    } else if (now == 127) { // delete
       now_cur -= 1;
       if (now_cur >= 0) {
         printf("\b \b");
@@ -34,14 +34,13 @@ void shell() {
   char cmd[256];
   read_string(cmd);
   if (!strcmp(cmd, "help")) {
-    printf(
-        "help      : print this help menu\n"
-        "hello     : print Hello World!\n"
-        "clear     : clear the screen!\n"
-        "ls        : list files\n"
-        "cat       : cat files\n"
-        "cur       : print current el\n"
-        "reboot    : reboot the device\n");
+    printf("help      : print this help menu\n"
+           "hello     : print Hello World!\n"
+           "clear     : clear the screen!\n"
+           "ls        : list files\n"
+           "cat       : cat files\n"
+           "cur       : print current el\n"
+           "reboot    : reboot the device\n");
   } else if (!strcmp(cmd, "hello")) {
     printf("Hello World!\n");
   } else if (!strcmp(cmd, "reboot")) {
@@ -55,13 +54,15 @@ void shell() {
   } else if (!strcmp(cmd, "show")) {
     lfb();
   } else if (!strcmp(cmd, "salloc")) {
-    void* ptr = simple_alloc(1);
+    void *ptr = simple_alloc(1);
     printf("%lx\n", (uint64_t)ptr);
+  } else if (!strcmp(cmd, "alloc")) {
+    page_alloc(3);
   } else if (!strcmp(cmd, "cat")) {
     printf("Filename: ");
     read_string(cmd);
-    void* file = get_cpio_file(cmd);
-    printf("%s\n", (char*)get_file_data(file));
+    void *file = get_cpio_file(cmd);
+    printf("%s\n", (char *)get_file_data(file));
   } else if (!strcmp(cmd, "clear")) {
     printf("\033[2J\033[1;1H");
   } else {
