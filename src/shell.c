@@ -65,6 +65,11 @@ void shell() {
     page_free(p3);
   } else if (!strcmp(cmd, "list")) {
     show_free_list();
+  } else if (!strcmp(cmd, "kmalloc")) {
+    for (int i = 0; i < 146; i++) {
+      void *addr1 = kmalloc(4);
+      printf("%x\n", addr1);
+    }
   } else if (!strcmp(cmd, "cat")) {
     printf("Filename: ");
     read_string(cmd);

@@ -20,6 +20,13 @@ struct page {
 
 struct slab {
   size_t size;
+  struct page *page;
+  struct list_head ob_list;
+  struct list_head list;
+};
+
+struct slab_obj {
+  void *addr;
   struct list_head list;
 };
 
@@ -33,5 +40,7 @@ void buddy_system_init();
 struct page *page_alloc(int order);
 void page_free(struct page *page);
 void show_free_list();
+void slabs_init();
+void *kmalloc(size_t size);
 
 #endif

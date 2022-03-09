@@ -35,6 +35,7 @@ void init(struct fdt_header *fdt) {
   get_memory();
   simple_alloc_init();
   buddy_system_init();
+  slabs_init();
   /* el2_entry();
   el1_entry(); */
   user();

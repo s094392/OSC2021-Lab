@@ -1,12 +1,13 @@
 #include "alloc.h"
 #include "list.h"
-
 #include "stdio.h"
+#include <stdint.h>
 
 void *simple_alloc_offset;
 struct page *frame_array;
 struct list_head **free_list;
-struct list_head *free_slab;
+struct list_head *slabs_free;
+struct list_head *slabs_full;
 int MAX_PAGE_ORDER;
 
 void simple_alloc_init() { simple_alloc_offset = (void *)&_end; }
@@ -47,11 +48,15 @@ void buddy_system_init() {
   list_add(&frame_array[0].list, free_list[MAX_PAGE_ORDER]);
 }
 
-struct page *get_buddy(struct page *buddy) {
-  return &frame_array[(buddy - frame_array) ^ (1 << buddy->val)];
+uint64_t get_page_id(struct page *page) { return (page - frame_array); }
+
+uint64_t get_page_addr(struct page *page) {
+  return get_page_id(page) * 0x100 + BUDDY_START;
 }
 
-int get_page_id(struct page *buddy) { return (buddy - frame_array); }
+struct page *get_buddy(struct page *buddy) {
+  return &frame_array[(get_page_id(buddy)) ^ (1 << buddy->val)];
+}
 
 struct page *page_alloc(int order) {
   struct page *result;
@@ -99,4 +104,52 @@ void show_free_list() {
     }
     printf("\n");
   }
+}
+
+void slabs_init() { INIT_LIST_HEAD(slabs_free); }
+
+void *kmalloc(size_t size) {
+  struct list_head *pos;
+  struct slab *slab = 0;
+  size_t target_size = 4;
+  printf("kmalloc size: %d\n", target_size);
+  list_for_each(pos, slabs_free) {
+    struct slab *tmp_slab = list_entry(pos, struct slab, list);
+    printf("found slab with size %x\n", tmp_slab->size);
+    if (tmp_slab->size == target_size && !list_empty(&tmp_slab->ob_list)) {
+      slab = list_entry(pos, struct slab, list);
+    }
+  }
+  if (!slab) {
+    printf("No slab found, allocating a new page...\n");
+    struct page *page = page_alloc(1);
+    uint64_t base_addr = get_page_addr(page);
+    slab = (struct slab *)base_addr;
+    slab->page = page;
+    slab->size = target_size;
+    INIT_LIST_HEAD(&slab->ob_list);
+    list_add(&slab->list, slabs_free);
+    base_addr += sizeof(struct slab);
+    int num_of_obj = (0x1000 - sizeof(struct slab)) /
+                     (sizeof(struct slab_obj) + target_size);
+    uint64_t slab_obj_base =
+        (uint64_t)base_addr + num_of_obj * sizeof(struct slab_obj);
+    printf("%d %d\n", sizeof(struct slab), sizeof(struct slab_obj));
+    printf("num_of_obj: %d, base_addr: %x, slab_obj_base: %x\n", num_of_obj,
+           base_addr, slab_obj_base);
+    for (int i = 0; i < num_of_obj; i++) {
+      struct slab_obj *slab_obj =
+          (struct slab_obj *)(base_addr + sizeof(struct slab_obj) * i);
+      slab_obj->addr = (void *)(slab_obj_base + target_size * i);
+      list_add(&slab_obj->list, &slab->ob_list);
+    }
+  }
+  void *result;
+  result = list_entry(slab->ob_list.next, struct slab_obj, list)->addr;
+  __list_del(&slab->ob_list, slab->ob_list.next->next);
+  if (list_empty(&slab->ob_list)) {
+    __list_del(slab->list.prev, slab->list.next);
+    list_add(&slab->list, slabs_full);
+  }
+  return result;
 }
