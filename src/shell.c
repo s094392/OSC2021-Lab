@@ -69,6 +69,7 @@ void shell() {
     for (int i = 0; i < 146; i++) {
       void *addr1 = kmalloc(4);
       printf("Allocated address: %lx\n", (uint64_t)addr1);
+      kfree(addr1);
     }
   } else if (!strcmp(cmd, "cat")) {
     printf("Filename: ");

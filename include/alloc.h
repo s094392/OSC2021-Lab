@@ -23,6 +23,7 @@ enum Page_status {
 struct page {
   int val;
   enum Page_status status;
+  struct slab *slab;
   struct list_head list;
 };
 

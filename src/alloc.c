@@ -133,6 +133,7 @@ void *kmalloc(size_t size) {
     slab->size = target_size;
     INIT_LIST_HEAD(&slab->obj_list);
     list_add(&slab->list, slabs_free);
+    page->slab = slab;
     // initialize slab structure and slab objects
     base_addr += sizeof(struct slab);
     int num_of_obj = (0x1000 - sizeof(struct slab)) /
@@ -159,4 +160,21 @@ void *kmalloc(size_t size) {
   return result;
 }
 
-void kfree(void *addr) {}
+void kfree(void *addr) {
+  // get page of current address
+  uint64_t page_base_addr = ((uint64_t)addr >> 12 << 12);
+  struct page *page = &frame_array[page_base_addr - BUDDY_START];
+  // get slab of current page
+  struct slab *slab = page->slab;
+  // get slab objects of current address
+  int num_of_obj =
+      (0x1000 - sizeof(struct slab)) / (sizeof(struct slab_obj) + slab->size);
+  int slab_offset = ((uint64_t)addr - page_base_addr - sizeof(struct slab) -
+                     sizeof(struct slab_obj) * num_of_obj) /
+                    slab->size;
+  struct slab_obj *slab_obj =
+      (struct slab_obj *)(get_page_addr(page) + sizeof(struct slab) +
+                          sizeof(struct slab_obj) * slab_offset);
+  // push slab object into obj_list
+  list_add(&slab_obj->list, &slab->obj_list);
+}
