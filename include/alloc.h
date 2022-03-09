@@ -35,6 +35,8 @@ void page_free(struct page *page);
 void show_free_list();
 
 // slab allocator
+#define NUM_OF_AVALIABLE_SIZES 7
+extern size_t avaliable_sizes[];
 struct slab {
   size_t size;
   struct page *page;

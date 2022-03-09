@@ -112,12 +112,18 @@ void show_free_list() {
 }
 
 void slabs_init() { INIT_LIST_HEAD(slabs_free); }
+size_t avaliable_sizes[] = {16, 32, 48, 96, 128, 256, 512};
 
 void *kmalloc(size_t size) {
-  struct list_head *pos;
   struct slab *slab = 0;
-  size_t target_size = 4;
+  // determine the target size
+  size_t target_size;
+  for (int i = 0; i < NUM_OF_AVALIABLE_SIZES; i++) {
+    if (avaliable_sizes[i] >= size)
+      target_size = avaliable_sizes[i];
+  }
   // find slab with requested size
+  struct list_head *pos;
   list_for_each(pos, slabs_free) {
     struct slab *tmp_slab = list_entry(pos, struct slab, list);
     if (tmp_slab->size == target_size && !list_empty(&tmp_slab->obj_list)) {
