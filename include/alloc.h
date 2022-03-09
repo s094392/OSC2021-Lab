@@ -21,7 +21,7 @@ struct page {
 struct slab {
   size_t size;
   struct page *page;
-  struct list_head ob_list;
+  struct list_head obj_list;
   struct list_head list;
 };
 

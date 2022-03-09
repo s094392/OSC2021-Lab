@@ -55,7 +55,7 @@ void shell() {
     lfb();
   } else if (!strcmp(cmd, "salloc")) {
     void *ptr = simple_alloc(1);
-    printf("%lx\n", (uint64_t)ptr);
+    printf("Allocated address: %lx\n", (uint64_t)ptr);
   } else if (!strcmp(cmd, "alloc")) {
     struct page *p1 = page_alloc(1);
     struct page *p2 = page_alloc(1);
@@ -68,7 +68,7 @@ void shell() {
   } else if (!strcmp(cmd, "kmalloc")) {
     for (int i = 0; i < 146; i++) {
       void *addr1 = kmalloc(4);
-      printf("%x\n", addr1);
+      printf("Allocated address: %lx\n", (uint64_t)addr1);
     }
   } else if (!strcmp(cmd, "cat")) {
     printf("Filename: ");
