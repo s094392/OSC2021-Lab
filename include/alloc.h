@@ -6,11 +6,20 @@
 #define BUDDY_START 0x100000
 #define BUDDY_END 0x200000
 
-#define FREE_FRAME -1
-#define USED_FRAME -2
+enum Page_status {
+  FREE_PAGE,
+  ALLOCATED_PAGE,
+  USED_PAGE,
+};
 
 struct page {
   int val;
+  enum Page_status status;
+  struct list_head list;
+};
+
+struct slab {
+  size_t size;
   struct list_head list;
 };
 
@@ -22,5 +31,7 @@ void simple_alloc_init();
 void *simple_alloc(size_t size);
 void buddy_system_init();
 struct page *page_alloc(int order);
+void page_free(struct page *page);
+void show_free_list();
 
 #endif

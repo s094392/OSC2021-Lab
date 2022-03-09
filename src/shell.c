@@ -57,7 +57,14 @@ void shell() {
     void *ptr = simple_alloc(1);
     printf("%lx\n", (uint64_t)ptr);
   } else if (!strcmp(cmd, "alloc")) {
-    page_alloc(3);
+    struct page *p1 = page_alloc(1);
+    struct page *p2 = page_alloc(1);
+    struct page *p3 = page_alloc(3);
+    page_free(p1);
+    page_free(p2);
+    page_free(p3);
+  } else if (!strcmp(cmd, "list")) {
+    show_free_list();
   } else if (!strcmp(cmd, "cat")) {
     printf("Filename: ");
     read_string(cmd);
