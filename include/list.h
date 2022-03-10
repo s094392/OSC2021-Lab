@@ -10,12 +10,14 @@
   })
 
 #define list_entry(ptr, type, member) container_of(ptr, type, member)
+
 #define list_for_each(pos, head)                                               \
   for (pos = (head)->next; pos != (head); pos = pos->next)
 
 struct list_head {
   struct list_head *next, *prev;
 };
+
 void INIT_LIST_HEAD(struct list_head *head);
 int list_empty(const struct list_head *head);
 void __list_add(struct list_head *new_lst, struct list_head *prev,

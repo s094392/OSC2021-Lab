@@ -4,6 +4,7 @@
 #include "reset.h"
 #include "stdio.h"
 #include "string.h"
+#include "task.h"
 #include "trap.h"
 
 void read_string(char *cmd) {
@@ -51,6 +52,9 @@ void shell() {
     asm volatile("svc 0");
   } else if (!strcmp(cmd, "ls")) {
     cpio_list();
+  } else if (!strcmp(cmd, "cur")) {
+    struct task *task = get_current_task();
+    printf("Current pid: %d\n", task->pid);
   } else if (!strcmp(cmd, "show")) {
     lfb();
   } else if (!strcmp(cmd, "salloc")) {

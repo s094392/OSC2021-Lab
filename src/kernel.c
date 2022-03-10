@@ -8,6 +8,7 @@
 #include "shell.h"
 #include "stdio.h"
 #include "string.h"
+#include "task.h"
 #include "uart.h"
 
 extern void el2_entry();
@@ -31,12 +32,15 @@ void init(struct fdt_header *fdt) {
 
   fdt_traverse(fdt, get_initramfs);
 
-  get_board_revision();
-  get_memory();
+  // get_board_revision();
+  // get_memory();
   simple_alloc_init();
   buddy_system_init();
   slabs_init();
-  /* el2_entry();
-  el1_entry(); */
+  multitasking_init();
+  struct task *task = task_create((uint64_t)&user);
+  task_run(task);
+  el2_entry();
+  // el1_entry();
   user();
 }
