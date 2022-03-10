@@ -27,6 +27,12 @@ void user() {
   }
 }
 
+void first() {
+  printf("I'm first task\n");
+  // printf("My pid is %d\n", get_current_task()->pid);
+  schedule();
+}
+
 void init(struct fdt_header *fdt) {
   uart_init();
 
@@ -38,9 +44,10 @@ void init(struct fdt_header *fdt) {
   buddy_system_init();
   slabs_init();
   multitasking_init();
+  struct task *first_task = task_create((uint64_t)&first);
   struct task *task = task_create((uint64_t)&user);
-  task_run(task);
+  task_run(first_task);
   el2_entry();
   // el1_entry();
-  user();
+  // user();
 }
