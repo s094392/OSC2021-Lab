@@ -24,5 +24,6 @@ void __list_add(struct list_head *new_lst, struct list_head *prev,
                 struct list_head *next);
 void list_add(struct list_head *new_lst, struct list_head *head);
 void __list_del(struct list_head *prev, struct list_head *next);
+void list_add_tail(struct list_head *new_lst, struct list_head *head);
 
 #endif

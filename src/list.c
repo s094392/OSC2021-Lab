@@ -16,6 +16,10 @@ void list_add(struct list_head *new_lst, struct list_head *head) {
   __list_add(new_lst, head, head->next);
 }
 
+void list_add_tail(struct list_head *new_lst, struct list_head *head) {
+  __list_add(new_lst, head->prev, head);
+}
+
 void __list_del(struct list_head *prev, struct list_head *next) {
   next->prev = prev;
   prev->next = next;
