@@ -19,7 +19,7 @@ struct task *task_create(uint64_t addr) {
   struct task *task = kmalloc(sizeof(struct task));
   task->pid = pid_now++;
   task->lr = addr;
-  task->sp = task->fp = (uint64_t)page_alloc(1);
+  task->sp = task->fp = get_page_addr(page_alloc(1)) + 0x1000;
   list_add(&task->list, runqueue);
   return task;
 }
@@ -37,7 +37,7 @@ void schedule() {
   }
   struct task *current_task = get_current_task();
   struct task *next_task = list_entry(runqueue->next, struct task, list);
-  __list_del(next_task->list.prev, next_task->list.next);
+  __list_del(next_task->list.prev, next_task->list.next->next);
   list_add_tail(&next_task->list, runqueue);
   switch_to(current_task, next_task);
 }

@@ -28,9 +28,11 @@ void user() {
 }
 
 void first() {
-  printf("I'm first task\n");
-  // printf("My pid is %d\n", get_current_task()->pid);
-  schedule();
+  while (1) {
+    printf("I'm first task\n");
+    // printf("My pid is %d\n", get_current_task()->pid);
+    schedule();
+  }
 }
 
 void init(struct fdt_header *fdt) {
