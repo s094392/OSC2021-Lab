@@ -137,6 +137,7 @@ void *kmalloc(size_t size) {
     slab = (struct slab *)base_addr;
     slab->page = page;
     slab->size = target_size;
+    slab->status = SLAB_FREE;
     INIT_LIST_HEAD(&slab->obj_list);
     list_add(&slab->list, slabs_free);
     page->slab = slab;
@@ -183,4 +184,9 @@ void kfree(void *addr) {
                           sizeof(struct slab_obj) * slab_offset);
   // push slab object into obj_list
   list_add(&slab_obj->list, &slab->obj_list);
+  if (slab->status == SLAB_FULL) {
+    slab->status = SLAB_FREE;
+    __list_del(slab->list.prev, slab->list.next);
+    list_add(&slab->list, slabs_free);
+  }
 }

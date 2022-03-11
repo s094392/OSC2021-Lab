@@ -39,9 +39,13 @@ void show_free_list();
 // slab allocator
 #define NUM_OF_AVALIABLE_SIZES 7
 extern size_t avaliable_sizes[];
+
+enum SLAB_STATUS { SLAB_FULL, SLAB_FREE };
+
 struct slab {
   size_t size;
   struct page *page;
+  enum SLAB_STATUS status;
   struct list_head obj_list;
   struct list_head list;
 };
