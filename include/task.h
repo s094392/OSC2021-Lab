@@ -20,7 +20,7 @@ struct task *task_create(uint64_t addr);
 void task_run(struct task *task);
 void schedule();
 
-extern struct list_head *runqueue;
+extern struct list_head *readyqueue;
 extern struct list_head *waitqueue;
 
 #endif

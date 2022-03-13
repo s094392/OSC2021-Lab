@@ -28,11 +28,10 @@ void user() {
 }
 
 void first() {
-  while (1) {
-    printf("I'm first task\n");
-    // printf("My pid is %d\n", get_current_task()->pid);
-    schedule();
-  }
+  el1_entry();
+  asm volatile("svc 0");
+  while (1)
+    asm volatile("nop");
 }
 
 void init(struct fdt_header *fdt) {
@@ -46,10 +45,9 @@ void init(struct fdt_header *fdt) {
   buddy_system_init();
   slabs_init();
   multitasking_init();
+  el2_entry();
   struct task *first_task = task_create((uint64_t)&first);
   struct task *task = task_create((uint64_t)&user);
   task_run(first_task);
-  el2_entry();
-  // el1_entry();
   // user();
 }
