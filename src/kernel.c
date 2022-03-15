@@ -29,7 +29,6 @@ void user() {
 
 void first() {
   el1_entry();
-  asm volatile("svc 0");
   while (1)
     asm volatile("nop");
 }
@@ -46,8 +45,6 @@ void init(struct fdt_header *fdt) {
   slabs_init();
   multitasking_init();
   el2_entry();
-  struct task *first_task = task_create((uint64_t)&first);
-  struct task *task = task_create((uint64_t)&user);
+  struct task *first_task = task_create((uint64_t)&user);
   task_run(first_task);
-  // user();
 }

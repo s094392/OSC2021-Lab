@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 int get_current_el();
-struct trap_frame_t {
+struct trap_frame {
   uint64_t x30;
   uint64_t x29;
   uint64_t x28;
