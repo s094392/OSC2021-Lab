@@ -34,9 +34,9 @@ el1_entry:
     ldr     x2, =exception_table
     msr     vbar_el1, x2
 
-    mov     x0, #0
-    msr     spsr_el1, x0
-    msr     elr_el1, lr
+    mov     x3, #0
+    msr     spsr_el1, x3
+    msr     elr_el1, x0
 
     eret
 

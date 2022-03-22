@@ -37,4 +37,6 @@ struct trap_frame {
   uint64_t x0;
 };
 
+extern void el1_entry(void *addr);
+
 #endif

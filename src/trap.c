@@ -53,7 +53,6 @@ void synchronize_handler(uint64_t esr, uint64_t elr,
     syscall_handler(trap_frame);
     break;
   }
-  core_timer_enable(3);
 }
 
 void irq_handler(uint64_t esr, uint64_t elr, struct trap_frame *trap_frame) {

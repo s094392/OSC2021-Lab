@@ -8,6 +8,7 @@
 #include "shell.h"
 #include "stdio.h"
 #include "string.h"
+#include "syscall.h"
 #include "task.h"
 #include "uart.h"
 
@@ -28,9 +29,8 @@ void user() {
 }
 
 void first() {
-  el1_entry();
-  while (1)
-    asm volatile("nop");
+  printf("%x\n", get_current_task());
+  sys_exec("syscall.img", NULL);
 }
 
 void init(struct fdt_header *fdt) {
@@ -45,6 +45,6 @@ void init(struct fdt_header *fdt) {
   slabs_init();
   multitasking_init();
   el2_entry();
-  struct task *first_task = task_create((uint64_t)&user);
+  struct task *first_task = task_create((uint64_t)&first);
   task_run(first_task);
 }

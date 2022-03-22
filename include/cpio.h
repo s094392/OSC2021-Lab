@@ -23,8 +23,8 @@ struct cpio_newc_header {
 };
 
 void cpio_list();
-void *get_cpio_file(char *name);
-unsigned long get_file_size(const void *cpio_file);
-void *get_file_data(const void *cpio_file);
+struct cpio_newc_header *get_cpio_file(const char *name);
+unsigned long get_file_size(const struct cpio_newc_header *cpio_file);
+void *get_file_data(const struct cpio_newc_header *cpio_file);
 
 #endif

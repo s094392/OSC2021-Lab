@@ -45,7 +45,7 @@ void cpio_list() {
   }
 }
 
-void *get_cpio_file(char *name) {
+struct cpio_newc_header *get_cpio_file(const char *name) {
   struct cpio_newc_header *cpio_itr = (struct cpio_newc_header *)cpio_addr;
   while (strncmp(cpio_itr->c_magic, "070701", 6) == 0) {
     unsigned long mode = atol_n(cpio_itr->c_mode, 8, 16);
@@ -63,11 +63,11 @@ void *get_cpio_file(char *name) {
   return NULL;
 }
 
-unsigned long get_file_size(const void *cpio_file) {
+unsigned long get_file_size(const struct cpio_newc_header *cpio_file) {
   return atol_n(((struct cpio_newc_header *)cpio_file)->c_filesize, 8, 16);
 }
 
-void *get_file_data(const void *cpio_file) {
+void *get_file_data(const struct cpio_newc_header *cpio_file) {
   unsigned long namesize =
       atol_n(((struct cpio_newc_header *)cpio_file)->c_namesize, 8, 16);
   return &(

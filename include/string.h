@@ -65,7 +65,7 @@ char *strcpy(char *dst, char *src);
 char *strncpy(char *d, char *s, size_t n);
 char *strcat(char *d, char *s);
 char *strncat(char *d, char *s, size_t n);
-int strcmp(char *s1, char *s2);
+int strcmp(const char *s1, const char *s2);
 int strncmp(char *d, char *s, size_t n);
 
 #endif

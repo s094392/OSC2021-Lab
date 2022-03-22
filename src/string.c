@@ -59,7 +59,8 @@ void *memcpy(void *d, void *s, size_t n) {
   unsigned char *dst = (unsigned char *)d;
   unsigned char *src = (unsigned char *)s;
 
-  for (int idx = 0; idx < n; idx++) *(dst++) = *(src++);
+  for (int idx = 0; idx < n; idx++)
+    *(dst++) = *(src++);
   return d;
 }
 
@@ -68,9 +69,11 @@ void *memmove(void *d, void *s, size_t n) {
   unsigned char *src = (unsigned char *)s;
 
   if (d >= s && d <= s + n) {
-    for (int idx = n - 1; idx >= 0; idx--) dst[idx] = src[idx];
+    for (int idx = n - 1; idx >= 0; idx--)
+      dst[idx] = src[idx];
   } else {
-    for (int idx = 0; idx < n; idx++) *(dst++) = *(src++);
+    for (int idx = 0; idx < n; idx++)
+      *(dst++) = *(src++);
   }
 
   return d;
@@ -79,21 +82,24 @@ void *memmove(void *d, void *s, size_t n) {
 void *memset(void *d, int v, size_t n) {
   unsigned char *dst = (unsigned char *)d;
 
-  for (int idx = 0; idx < n; idx++) *(dst++) = (unsigned char)v;
+  for (int idx = 0; idx < n; idx++)
+    *(dst++) = (unsigned char)v;
   return d;
 }
 
 long strlen(char *s) {
   long n = 0;
 
-  while (*s++) n++;
+  while (*s++)
+    n++;
   return n;
 }
 
 char *strcpy(char *dst, char *src) {
   char *tmp = dst;
 
-  while (*src) *(tmp++) = *(src++);
+  while (*src)
+    *(tmp++) = *(src++);
   *tmp = 0;
   return dst;
 }
@@ -101,16 +107,20 @@ char *strcpy(char *dst, char *src) {
 char *strncpy(char *dst, char *src, size_t n) {
   char *tmp = dst;
 
-  while (*src && n) *(tmp++) = *(src++), n--;
-  while (n--) *(tmp++) = 0;
+  while (*src && n)
+    *(tmp++) = *(src++), n--;
+  while (n--)
+    *(tmp++) = 0;
   return dst;
 }
 
 char *strcat(char *dst, char *src) {
   char *tmp = dst;
 
-  while (*tmp) tmp++;
-  while (*src) *(tmp++) = *(src++);
+  while (*tmp)
+    tmp++;
+  while (*src)
+    *(tmp++) = *(src++);
   *tmp = 0;
   return dst;
 }
@@ -118,13 +128,15 @@ char *strcat(char *dst, char *src) {
 char *strncat(char *dst, char *src, size_t n) {
   char *tmp = dst;
 
-  while (*tmp) tmp++;
-  while (*src && n) *(tmp++) = *(src++), n--;
+  while (*tmp)
+    tmp++;
+  while (*src && n)
+    *(tmp++) = *(src++), n--;
   *tmp = 0;
   return dst;
 }
 
-int strcmp(char *s1, char *s2) {
+int strcmp(const char *s1, const char *s2) {
   int value;
 
   s1--, s2--;
