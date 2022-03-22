@@ -1,7 +1,6 @@
 #ifndef ALLOC_H
 #define ALLOC_H
 #include "list.h"
-#include <stddef.h>
 #include <stdint.h>
 
 #define BUDDY_START 0x100000

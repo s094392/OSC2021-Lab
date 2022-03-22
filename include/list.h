@@ -1,7 +1,6 @@
 #ifndef LIST_H
 #define LIST_H
-
-#define offsetof(TYPE, MEMBER) ((unsigned int)&((TYPE *)0)->MEMBER)
+#include <stddef.h>
 
 #define container_of(ptr, type, member)                                        \
   ({                                                                           \

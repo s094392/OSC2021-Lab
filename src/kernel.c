@@ -28,10 +28,7 @@ void user() {
   }
 }
 
-void first() {
-  printf("%x\n", get_current_task());
-  sys_exec("syscall.img", NULL);
-}
+void first() { sys_exec("syscall.img", NULL); }
 
 void init(struct fdt_header *fdt) {
   uart_init();
