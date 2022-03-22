@@ -8,14 +8,23 @@
 
 int sys_getpid() {
   struct task *task = get_current_task();
-  printf("task: %x, %d\n", (uint64_t)task, task->pid);
-  while (1)
-    asm volatile("nop");
   return get_current_task()->pid;
 }
 
-size_t sys_uartread(char buf[], size_t size) {}
-size_t sys_uartwrite(const char buf[], size_t size) {}
+size_t sys_uartread(char buf[], size_t size) {
+  for (int i = 0; i < size; i++) {
+    buf[i] = getchar();
+  }
+  return size;
+}
+
+size_t sys_uartwrite(const char buf[], size_t size) {
+  for (int i = 0; i < size; i++) {
+    putchar(buf[i]);
+  }
+  return size;
+}
+
 int sys_exec(const char *name, char *const argv[]) {
   struct cpio_newc_header *cpio_file = get_cpio_file(name);
   int cpio_filesize = get_file_size(cpio_file);
@@ -28,5 +37,7 @@ int sys_exec(const char *name, char *const argv[]) {
   memcpy(code_addr, cpio_data, cpio_filesize);
   el1_entry(code_addr);
 }
+
 int sys_fork() {}
+
 void sys_exit() {}

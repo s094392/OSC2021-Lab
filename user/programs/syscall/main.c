@@ -3,5 +3,7 @@
 
 int main() {
   int pid = getpid();
-  printf("Pid is; %d\n", pid);
+  printf("Pid is: %d\n", pid);
+  while (1)
+    asm volatile("nop");
 }

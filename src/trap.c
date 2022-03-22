@@ -45,9 +45,7 @@ void syscall_handler(struct trap_frame *trap_frame) {
 
 void synchronize_handler(uint64_t esr, uint64_t elr,
                          struct trap_frame *trap_frame) {
-  printf("Current el: %d\n", get_current_el());
   int iss = esr & ((1 << 24) - 1);
-  printf("0x%lx 0x%lx, iss: %d\n", esr, elr, iss);
   switch (iss) {
   case 0:
     syscall_handler(trap_frame);
