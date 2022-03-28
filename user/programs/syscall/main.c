@@ -47,8 +47,9 @@ void shell() {
   printf("# ");
   char cmd[256];
   read_string(cmd);
-  int pid = getpid();
   if (!strcmp(cmd, "pid")) {
+    int pid = getpid();
+    printf("Pid is: %d\n", pid);
   } else if (!strcmp(cmd, "help")) {
     printf("This is user process\n");
   }
