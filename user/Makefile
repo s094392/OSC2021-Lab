@@ -33,6 +33,6 @@ $(LIBB_DIR)/%.o: $(LIB_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(BDIR)/*
-	mkdir $(LIBB_DIR)
+	rm -rf $(BDIR)
+	mkdir -p $(LIBB_DIR)
 
