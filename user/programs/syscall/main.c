@@ -57,6 +57,8 @@ void shell() {
   } else if (!strcmp(cmd, "fork")) {
     int child_pid = fork();
     printf("Child pid: %d\n", child_pid);
+  } else if (!strcmp(cmd, "exit")) {
+    __exit(0);
   }
 }
 

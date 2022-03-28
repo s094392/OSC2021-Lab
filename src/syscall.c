@@ -58,4 +58,10 @@ int sys_fork() {
   return 0;
 }
 
-void sys_exit() {}
+void sys_exit() {
+  struct task *task = get_current_task();
+  task->status = TASK_DEAD;
+  __list_del(task->list.prev, task->list.next);
+  list_add(&task->list, deadqueue);
+  schedule();
+}

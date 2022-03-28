@@ -7,10 +7,17 @@
 
 extern int pid_now;
 
+enum TASK_STATUS {
+  TASK_READY,
+  TASK_WAIT,
+  TASK_DEAD,
+};
+
 struct task {
   uint64_t x19, x20, x21, x22, x23, x24, x25, x26, x27, x28;
   uint64_t fp, lr, sp;
   int pid;
+  enum TASK_STATUS status;
   struct page *stack;
   struct page *code;
   struct trap_frame *trap_frame;
@@ -27,5 +34,6 @@ void schedule();
 
 extern struct list_head *readyqueue;
 extern struct list_head *waitqueue;
+extern struct list_head *deadqueue;
 
 #endif

@@ -6,6 +6,7 @@
 int pid_now;
 struct list_head *readyqueue;
 struct list_head *waitqueue;
+struct list_head *deadqueue;
 
 void multitasking_init() {
   pid_now = 1;
@@ -22,6 +23,7 @@ struct task *task_create(uint64_t addr) {
   task->lr = addr;
   task->stack = page_alloc(1);
   task->sp = task->fp = get_page_addr(task->stack) + 0x1000;
+  task->status = TASK_READY;
   list_add(&task->list, readyqueue);
   return task;
 }
