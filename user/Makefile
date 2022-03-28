@@ -15,6 +15,7 @@ LIB_OBJS = $(LIB_SRCS:$(LIB_DIR)/%.c=$(LIBB_DIR)/%.o)
 UDIR = programs
 U_PROGS = $(wildcard $(UDIR)/*)
 U_OBJS = $(U_PROGS:$(UDIR)/%=$(BDIR)/%)
+START = start
 
 all: clean $(LIB_OBJS) $(U_OBJS)
 
@@ -23,7 +24,8 @@ $(BDIR)/%: $(UDIR)/%
 	for file in $</*.c; do \
 		$(CC) $(CFLAGS) -c $$file -o $@/$$(basename $${file::-2}).o; \
 	done
-	$(LD) -T linker.ld -o $(BDIR)/$$(basename $@).elf $$(find $@/*.o) $(LIB_OBJS)
+	$(CC) $(CFLAGS) -c $(START).S -o $@/$(START).o;
+	$(LD) -T linker.ld -o $(BDIR)/$$(basename $@).elf $$(find $@/*.o) $(LIB_OBJS) $@/$(START).o
 	$(OBJCOPY) -O binary $(BDIR)/$$(basename $@).elf $(BDIR)/$$(basename $@.img)
 
 

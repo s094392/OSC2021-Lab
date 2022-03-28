@@ -103,22 +103,15 @@ char *fgets(char *s, int n, FILE *stream) {
 inline int putchar(int c) {
   char buf[1];
   buf[0] = c;
-  if (buf[0] == '\n')
-    buf[0] = '\r';
   uartwrite(buf, 1);
   return c;
 }
 
-int fputs(const char *str, FILE *stream) {
-  if (stream != stdout) {
-  } else {
-    while (*str)
-      putchar(*str++);
-  }
+int puts(const char *str) {
+  while (*str)
+    putchar(*str++);
   return putchar('\n');
 }
-
-int puts(const char *str) { return fputs(str, &_stdout); }
 
 void putd(int num, int prefix_zeros, int positive) {
   unsigned int divisor = 1000000000; /* only for 32-bit integer */
