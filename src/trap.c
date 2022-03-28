@@ -1,6 +1,7 @@
 #include "trap.h"
 #include "stdio.h"
 #include "syscall.h"
+#include "task.h"
 #include <stdint.h>
 
 extern void core_timer_handler();
@@ -13,6 +14,8 @@ int get_current_el() {
 }
 
 void syscall_handler(struct trap_frame *trap_frame) {
+  struct task *task = get_current_task();
+  task->trap_frame = trap_frame;
   switch (trap_frame->x8) {
 
   case 0: // getpid
@@ -34,7 +37,7 @@ void syscall_handler(struct trap_frame *trap_frame) {
     break;
 
   case 4: // fork
-    trap_frame->x0 = sys_fork();
+    sys_fork();
     break;
 
   case 5: // exit

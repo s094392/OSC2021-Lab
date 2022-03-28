@@ -52,6 +52,11 @@ void shell() {
     printf("Pid is: %d\n", pid);
   } else if (!strcmp(cmd, "help")) {
     printf("This is user process\n");
+  } else if (!strcmp(cmd, "exec")) {
+    exec("syscall.img", 0);
+  } else if (!strcmp(cmd, "fork")) {
+    int child_pid = fork();
+    printf("Child pid: %d\n", child_pid);
   }
 }
 

@@ -2,6 +2,7 @@
 #define TASK_H
 #include "alloc.h"
 #include "list.h"
+#include "trap.h"
 #include <stdint.h>
 
 extern int pid_now;
@@ -10,7 +11,9 @@ struct task {
   uint64_t x19, x20, x21, x22, x23, x24, x25, x26, x27, x28;
   uint64_t fp, lr, sp;
   int pid;
+  struct page *stack;
   struct page *code;
+  struct trap_frame *trap_frame;
   struct list_head list;
 };
 

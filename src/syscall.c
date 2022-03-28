@@ -37,6 +37,25 @@ int sys_exec(const char *name, char *const argv[]) {
   return 1;
 }
 
-int sys_fork() { return 0; }
+int sys_fork() {
+  struct task *task = get_current_task();
+  struct task *child_task = task_create(get_page_addr(task->code));
+
+  // Copy context
+  memcpy(child_task, task, sizeof(uint64_t) * 10);
+  child_task->code = task->code;
+  child_task->lr = task->lr;
+  child_task->sp =
+      get_page_addr(task->stack) - task->sp + get_page_addr(child_task->stack);
+  child_task->fp =
+      get_page_addr(task->stack) - task->fp + get_page_addr(child_task->stack);
+  child_task->trap_frame =
+      (struct trap_frame *)(get_page_addr(task->stack) -
+                            (uint64_t)task->trap_frame +
+                            get_page_addr(child_task->stack));
+  child_task->trap_frame->x0 = 0;
+  task->trap_frame->x0 = child_task->pid;
+  return 0;
+}
 
 void sys_exit() {}

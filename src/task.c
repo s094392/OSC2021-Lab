@@ -20,7 +20,8 @@ struct task *task_create(uint64_t addr) {
   struct task *task = kmalloc(sizeof(struct task));
   task->pid = pid_now++;
   task->lr = addr;
-  task->sp = task->fp = get_page_addr(page_alloc(1)) + 0x1000;
+  task->stack = page_alloc(1);
+  task->sp = task->fp = get_page_addr(task->stack) + 0x1000;
   list_add(&task->list, readyqueue);
   return task;
 }
