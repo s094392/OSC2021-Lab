@@ -1,6 +1,7 @@
 #include "syscall.h"
 #include "alloc.h"
 #include "cpio.h"
+#include "mbox.h"
 #include "stdio.h"
 #include "string.h"
 #include "task.h"
@@ -33,7 +34,12 @@ int sys_exec(const char *name, char *const argv[]) {
   int cpio_filesize = get_file_size(cpio_file);
   void *cpio_data = get_file_data(cpio_file);
   struct task *task = get_current_task();
-  task->code = page_alloc(1);
+  int order = 1;
+  while (cpio_filesize > 0x1000 << order) {
+    order++;
+  }
+  task->code = page_alloc(order);
+  printf("%lx\n", get_page_addr(task->code));
   void *code_addr = (void *)get_page_addr(task->code);
   memcpy(code_addr, cpio_data, cpio_filesize);
 
@@ -87,4 +93,10 @@ void sys_exit() {
   __list_del(task->list.prev, task->list.next);
   list_add(&task->list, deadqueue);
   schedule();
+}
+
+int sys_mbox_call(unsigned char ch, unsigned int *mbox) {
+  int res = mbox_call(ch, mbox);
+  printf("res: %d\n", res);
+  return res;
 }

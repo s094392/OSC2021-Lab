@@ -3,7 +3,7 @@ ARM = aarch64-linux-gnu
 CC = $(ARM)-gcc
 LD = $(ARM)-ld
 OBJCOPY = $(ARM)-objcopy
-CFLAGS = -Wall -I $(IDIR) -O0 -mgeneral-regs-only
+CFLAGS = -Wall -I $(IDIR) -O0 -mgeneral-regs-only -g
 IDIR = lib/include
 BDIR = build
 

@@ -9,4 +9,5 @@ size_t uartwrite(const char buf[], size_t size);
 int exec(const char *name, char *const argv[]);
 int fork();
 void __exit(int status);
+int mbox_call(unsigned char ch, unsigned int *mbox);
 #endif

@@ -45,3 +45,11 @@ void __exit(int status) {
   asm volatile("mov x8, #5");
   asm volatile("svc 0");
 }
+
+int mbox_call(unsigned char ch, unsigned int *mbox) {
+  asm volatile("mov x8, #6");
+  asm volatile("svc 0");
+  uint64_t result;
+  asm volatile("mov %0, x0" : "=r"(result)::);
+  return result;
+}

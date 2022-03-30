@@ -161,7 +161,6 @@ _irq_handler:
   mov x2, sp
   bl irq_handler
   kernel_exit
-  msr daifclr, #2
   eret
 
 .align 11
