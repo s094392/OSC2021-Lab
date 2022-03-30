@@ -29,16 +29,6 @@ void user() {
   }
 }
 
-void idle() {
-  printf("Ideling\n");
-  while (!list_empty(deadqueue)) {
-    struct task *task = list_entry(deadqueue->next, struct task, list);
-    page_free(task->stack);
-    kfree(task);
-    __list_del(task->list.prev, task->list.next);
-  }
-  schedule();
-}
 void first() { sys_exec("syscall.img", NULL); }
 
 void init(struct fdt_header *fdt) {
@@ -53,7 +43,6 @@ void init(struct fdt_header *fdt) {
   slabs_init();
   multitasking_init();
   el2_entry();
-  struct task *idle = task_create((uint64_t)&idle);
   struct task *first_task = task_create((uint64_t)&first);
-  task_run(idle);
+  task_run(first_task);
 }

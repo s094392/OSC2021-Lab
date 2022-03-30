@@ -19,6 +19,7 @@ struct task {
   int pid;
   enum TASK_STATUS status;
   struct page *stack;
+  struct page *ustack;
   struct page *code;
   struct trap_frame *trap_frame;
   struct list_head list;
@@ -35,5 +36,7 @@ void schedule();
 extern struct list_head *readyqueue;
 extern struct list_head *waitqueue;
 extern struct list_head *deadqueue;
+
+extern struct task *idle_task;
 
 #endif

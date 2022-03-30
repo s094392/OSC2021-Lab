@@ -4,6 +4,9 @@
 #include <stdint.h>
 int get_current_el();
 struct trap_frame {
+  uint64_t spsr_el1;
+  uint64_t elr_el1;
+  uint64_t sp_el0;
   uint64_t x30;
   uint64_t x29;
   uint64_t x28;
@@ -37,6 +40,6 @@ struct trap_frame {
   uint64_t x0;
 };
 
-extern void el1_entry(void *addr);
+extern void to_el0(void *addr, uint64_t usp);
 
 #endif

@@ -1,5 +1,5 @@
 .global el2_entry
-.global el1_entry
+.global to_el0
 
 el2_entry:
     ldr     x1, =_start
@@ -25,9 +25,8 @@ el2_entry:
 
     eret
 
-el1_entry:  
-    // set stack before our code
-    ldr     x1, =_start
+to_el0:  
+    msr     elr_el1, x0
     msr     sp_el0, x1
 
     // set up exception handlers
@@ -36,7 +35,6 @@ el1_entry:
 
     mov     x3, #0
     msr     spsr_el1, x3
-    msr     elr_el1, x0
 
     eret
 
@@ -72,9 +70,23 @@ el1_entry:
     str   x28, [sp, #-8]!
     str   x29, [sp, #-8]!
     str   x30, [sp, #-8]!
+
+    mrs   x21, sp_el0
+    str   x21, [sp, #-8]!
+    mrs   x21, elr_el1
+    str   x21, [sp, #-8]!
+    mrs   x21, spsr_el1
+    str   x21, [sp, #-8]!
   .endm
 
 .macro kernel_exit
+    ldr   x21, [sp], #8  
+    msr   spsr_el1, x21
+    ldr   x21, [sp], #8  
+    msr   elr_el1, x21
+    ldr   x21, [sp], #8  
+    msr   sp_el0, x21
+
     ldr   x30, [sp], #8  
     ldr   x29, [sp], #8  
     ldr   x28, [sp], #8  

@@ -33,7 +33,7 @@ int sys_exec(const char *name, char *const argv[]) {
   task->code = page_alloc(1);
   void *code_addr = (void *)get_page_addr(task->code);
   memcpy(code_addr, cpio_data, cpio_filesize);
-  el1_entry(code_addr);
+  to_el0(code_addr, get_page_addr(task->ustack) + 0x1000);
   return 1;
 }
 
@@ -43,16 +43,22 @@ int sys_fork() {
 
   // Copy context
   memcpy(child_task, task, sizeof(uint64_t) * 10);
+  memcpy((void *)(get_page_addr(child_task->stack) - 0x1000),
+         (void *)(get_page_addr(task->stack) - 0x1000), 0x1000);
+  memcpy((void *)(get_page_addr(child_task->ustack) - 0x1000),
+         (void *)(get_page_addr(task->ustack) - 0x1000), 0x1000);
   child_task->code = task->code;
-  child_task->lr = task->lr;
+  child_task->lr = task->trap_frame->x30;
   child_task->sp =
-      get_page_addr(task->stack) - task->sp + get_page_addr(child_task->stack);
+      get_page_addr(child_task->stack) + task->sp - get_page_addr(task->stack);
   child_task->fp =
-      get_page_addr(task->stack) - task->fp + get_page_addr(child_task->stack);
-  child_task->trap_frame =
-      (struct trap_frame *)(get_page_addr(task->stack) -
-                            (uint64_t)task->trap_frame +
-                            get_page_addr(child_task->stack));
+      get_page_addr(child_task->stack) + task->fp - get_page_addr(task->stack);
+  child_task->trap_frame = get_page_addr(child_task->stack) + task->trap_frame -
+                           get_page_addr(task->stack);
+  child_task->trap_frame->sp_el0 = get_page_addr(child_task->ustack) +
+                                   task->trap_frame->sp_el0 -
+                                   get_page_addr(task->ustack);
+
   child_task->trap_frame->x0 = 0;
   task->trap_frame->x0 = child_task->pid;
   return 0;
