@@ -28,6 +28,7 @@ size_t sys_uartwrite(const char buf[], size_t size) {
 }
 
 int sys_exec(const char *name, char *const argv[]) {
+  // extract data from cpio and move it to new page
   struct cpio_newc_header *cpio_file = get_cpio_file(name);
   int cpio_filesize = get_file_size(cpio_file);
   void *cpio_data = get_file_data(cpio_file);
@@ -35,6 +36,8 @@ int sys_exec(const char *name, char *const argv[]) {
   task->code = page_alloc(1);
   void *code_addr = (void *)get_page_addr(task->code);
   memcpy(code_addr, cpio_data, cpio_filesize);
+
+  // jump to user program and with user stack
   to_el0(code_addr, get_page_addr(task->ustack) + 0x1000);
   return 1;
 }
@@ -49,8 +52,11 @@ int sys_fork() {
          (void *)(get_page_addr(task->stack)), 0x1000);
   memcpy((void *)(get_page_addr(child_task->ustack)),
          (void *)(get_page_addr(task->ustack)), 0x1000);
+
+  // use the same code section
   child_task->code = task->code;
-  child_task->lr = task->trap_frame->x30;
+
+  // calculate new sp, fp and trap_frame
   child_task->sp =
       get_page_addr(child_task->stack) + task->sp - get_page_addr(task->stack);
   child_task->fp =
@@ -63,14 +69,19 @@ int sys_fork() {
                                    task->trap_frame->sp_el0 -
                                    get_page_addr(task->ustack);
 
+  // the return value of fork is the child id or 0
   child_task->trap_frame->x0 = 0;
   task->trap_frame->x0 = child_task->pid;
+
+  // for child process, just jump to the end of exc handler
   child_task->lr = (uint64_t)&fork_child_entry;
   child_task->sp = (uint64_t)child_task->trap_frame;
   return 0;
 }
 
 void sys_exit() {
+  // mark the status of current task to dead and move it from readyqueue to
+  // deadqueue
   struct task *task = get_current_task();
   task->status = TASK_DEAD;
   __list_del(task->list.prev, task->list.next);
