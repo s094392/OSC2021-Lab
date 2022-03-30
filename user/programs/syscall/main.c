@@ -57,8 +57,14 @@ void shell() {
   } else if (!strcmp(cmd, "fork")) {
     int child_pid = fork();
     printf("Child pid: %d\n", child_pid);
+    if (child_pid == 0) {
+      while (1) {
+      }
+    }
   } else if (!strcmp(cmd, "exit")) {
     __exit(0);
+  } else {
+    printf("Not a vaild command!\n");
   }
 }
 

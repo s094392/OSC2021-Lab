@@ -2,10 +2,8 @@
 #include "stdio.h"
 #include "syscall.h"
 #include "task.h"
+#include "timer.h"
 #include <stdint.h>
-
-extern void core_timer_handler();
-extern void core_timer_enable(int s);
 
 int get_current_el() {
   int el;
@@ -59,6 +57,6 @@ void synchronize_handler(uint64_t esr, uint64_t elr,
 }
 
 void irq_handler(uint64_t esr, uint64_t elr, struct trap_frame *trap_frame) {
-  printf("Timer!");
-  core_timer_handler();
+  core_timer_handler(4);
+  schedule();
 }

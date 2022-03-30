@@ -11,7 +11,6 @@ struct task *idle_task;
 
 void idle() {
   while (1) {
-    // printf("Ideling\n");
     while (!list_empty(deadqueue)) {
       struct task *task = list_entry(deadqueue->next, struct task, list);
       page_free(task->stack);
@@ -65,6 +64,6 @@ void schedule() {
   struct task *next_task = list_entry(readyqueue->next, struct task, list);
   __list_del(next_task->list.prev, next_task->list.next);
   list_add_tail(&next_task->list, readyqueue);
-  printf("Schedule! form %d to %d\n", current_task->pid, next_task->pid);
+  // printf("Schedule! form %d to %d\n", current_task->pid, next_task->pid);
   switch_to(current_task, next_task);
 }

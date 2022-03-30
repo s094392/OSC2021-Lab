@@ -11,11 +11,11 @@
 #include "string.h"
 #include "syscall.h"
 #include "task.h"
+#include "timer.h"
 #include "uart.h"
 
 extern void el2_entry();
 extern void el1_entry();
-extern void core_timer_enable(int s);
 
 void get_initramfs(char *key, void *data, int len) {
   if (!strncmp(key, "linux,initrd-start", 18)) {
@@ -43,7 +43,7 @@ void init(struct fdt_header *fdt) {
   slabs_init();
   multitasking_init();
   el2_entry();
-  core_timer_enable(1);
+  core_timer_enable(4);
   struct task *first_task = task_create((uint64_t)&first);
   task_run(first_task);
 }
