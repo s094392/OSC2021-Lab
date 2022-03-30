@@ -14,6 +14,7 @@ int get_current_el() {
 }
 
 void syscall_handler(struct trap_frame *trap_frame) {
+  enable_timer_interrupt();
   struct task *task = get_current_task();
   task->trap_frame = trap_frame;
   switch (trap_frame->x8) {
@@ -44,6 +45,7 @@ void syscall_handler(struct trap_frame *trap_frame) {
     sys_exit();
     break;
   }
+  disable_timer_interrupt();
 }
 
 void synchronize_handler(uint64_t esr, uint64_t elr,

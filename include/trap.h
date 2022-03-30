@@ -41,5 +41,7 @@ struct trap_frame {
 };
 
 extern void to_el0(void *addr, uint64_t usp);
+void enable_timer_interrupt();
+void disable_timer_interrupt();
 
 #endif

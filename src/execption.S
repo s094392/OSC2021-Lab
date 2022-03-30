@@ -1,6 +1,16 @@
 .global el2_entry
 .global fork_child_entry
 .global to_el0
+.global enable_timer_interrupt
+.global disable_timer_interrupt
+
+enable_timer_interrupt:
+    msr DAIFClr, 0xf
+    ret
+
+disable_timer_interrupt:
+    msr DAIFSet, 0xf
+    ret
 
 el2_entry:
     ldr     x1, =_start

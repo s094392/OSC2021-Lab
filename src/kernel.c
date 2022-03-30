@@ -43,6 +43,7 @@ void init(struct fdt_header *fdt) {
   slabs_init();
   multitasking_init();
   el2_entry();
+  core_timer_enable(1);
   struct task *first_task = task_create((uint64_t)&first);
   task_run(first_task);
 }
