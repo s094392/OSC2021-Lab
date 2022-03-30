@@ -1,4 +1,5 @@
 .global el2_entry
+.global fork_child_entry
 .global to_el0
 
 el2_entry:
@@ -138,6 +139,7 @@ _syn_handler:
   mrs x1, elr_el1
   mov x2, sp
   bl synchronize_handler
+fork_child_entry:
   kernel_exit
   eret
 

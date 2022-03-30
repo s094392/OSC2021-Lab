@@ -6,6 +6,8 @@
 #include "task.h"
 #include "trap.h"
 
+extern const uint64_t fork_child_entry[];
+
 int sys_getpid() {
   struct task *task = get_current_task();
   return task->pid;
@@ -43,24 +45,28 @@ int sys_fork() {
 
   // Copy context
   memcpy(child_task, task, sizeof(uint64_t) * 10);
-  memcpy((void *)(get_page_addr(child_task->stack) - 0x1000),
-         (void *)(get_page_addr(task->stack) - 0x1000), 0x1000);
-  memcpy((void *)(get_page_addr(child_task->ustack) - 0x1000),
-         (void *)(get_page_addr(task->ustack) - 0x1000), 0x1000);
+  memcpy((void *)(get_page_addr(child_task->stack)),
+         (void *)(get_page_addr(task->stack)), 0x1000);
+  memcpy((void *)(get_page_addr(child_task->ustack)),
+         (void *)(get_page_addr(task->ustack)), 0x1000);
   child_task->code = task->code;
   child_task->lr = task->trap_frame->x30;
   child_task->sp =
       get_page_addr(child_task->stack) + task->sp - get_page_addr(task->stack);
   child_task->fp =
       get_page_addr(child_task->stack) + task->fp - get_page_addr(task->stack);
-  child_task->trap_frame = get_page_addr(child_task->stack) + task->trap_frame -
-                           get_page_addr(task->stack);
+  child_task->trap_frame =
+      (struct trap_frame *)((uint64_t)task->trap_frame -
+                            get_page_addr(task->stack) +
+                            get_page_addr(child_task->stack));
   child_task->trap_frame->sp_el0 = get_page_addr(child_task->ustack) +
                                    task->trap_frame->sp_el0 -
                                    get_page_addr(task->ustack);
 
   child_task->trap_frame->x0 = 0;
   task->trap_frame->x0 = child_task->pid;
+  child_task->lr = (uint64_t)&fork_child_entry;
+  child_task->sp = (uint64_t)child_task->trap_frame;
   return 0;
 }
 

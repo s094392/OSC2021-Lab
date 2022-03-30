@@ -11,7 +11,7 @@ struct task *idle_task;
 
 void idle() {
   while (1) {
-    printf("Ideling\n");
+    // printf("Ideling\n");
     while (!list_empty(deadqueue)) {
       struct task *task = list_entry(deadqueue->next, struct task, list);
       page_free(task->stack);
@@ -57,7 +57,7 @@ void schedule() {
   // check readyqueue
   struct task *current_task = get_current_task();
   if (list_empty(readyqueue)) {
-    printf("No avaliable task in readyqueue!\n");
+    // printf("No avaliable task in readyqueue!\n");
     switch_to(current_task, idle_task);
     return;
   }
