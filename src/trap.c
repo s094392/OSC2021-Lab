@@ -12,7 +12,7 @@ int get_current_el() {
 }
 
 void syscall_handler(struct trap_frame *trap_frame) {
-  enable_timer_interrupt();
+  // enable_timer_interrupt();
   struct task *task = get_current_task();
   task->trap_frame = trap_frame;
   switch (trap_frame->x8) {
@@ -48,7 +48,7 @@ void syscall_handler(struct trap_frame *trap_frame) {
         sys_mbox_call(trap_frame->x0, (unsigned int *)trap_frame->x1);
     break;
   }
-  disable_timer_interrupt();
+  // disable_timer_interrupt();
 }
 
 void synchronize_handler(uint64_t esr, uint64_t elr,
@@ -56,7 +56,9 @@ void synchronize_handler(uint64_t esr, uint64_t elr,
   int iss = esr & ((1 << 24) - 1);
   switch (iss) {
   case 0:
+    enable_timer_interrupt();
     syscall_handler(trap_frame);
+    disable_timer_interrupt();
     break;
   }
 }

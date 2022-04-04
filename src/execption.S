@@ -34,6 +34,9 @@ el2_entry:
     msr     spsr_el2, x2
     msr     elr_el2, lr
 
+    ldr     x2, =exception_table
+    msr     vbar_el1, x2
+
     eret
 
 to_el0:  
@@ -149,6 +152,7 @@ _syn_handler:
   mrs x1, elr_el1
   mov x2, sp
   bl synchronize_handler
+
 fork_child_entry:
   kernel_exit
   eret

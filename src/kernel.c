@@ -36,15 +36,14 @@ void init(struct fdt_header *fdt) {
 
   fdt_traverse(fdt, get_initramfs);
 
-  // get_board_revision();
-  // get_memory();
   simple_alloc_init();
   buddy_system_init();
   slabs_init();
   multitasking_init();
   el2_entry();
-  // lfb();
   core_timer_enable(4);
+  enable_timer_interrupt();
   struct task *first_task = task_create((uint64_t)&first);
+
   task_run(first_task);
 }

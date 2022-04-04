@@ -41,7 +41,7 @@ int fork() {
   return result;
 }
 
-void __exit(int status) {
+void exit(int status) {
   asm volatile("mov x8, #5");
   asm volatile("svc 0");
 }

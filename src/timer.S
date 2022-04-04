@@ -12,7 +12,6 @@ core_timer_enable:
   mov x1, 2
   ldr x2, =CORE0_TIMER_IRQ_CTRL
   str w1, [x2] // unmask timer interrupt
-  msr daifclr, #2
   ret
 
 core_timer_handler:

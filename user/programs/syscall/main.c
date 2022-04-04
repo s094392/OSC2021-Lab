@@ -54,7 +54,7 @@ long _strlen(char *s) {
   return n;
 }
 
-void lfb() {
+void showimage() {
   unsigned int __attribute__((aligned(16))) mbox[36];
   unsigned int width, height, pitch, isrgb; /* dimensions and channel order */
   unsigned char *lfb;                       /* raw frame buffer address */
@@ -105,7 +105,6 @@ void lfb() {
 
   // this might not return exactly what we asked for, could be
   // the closest supported resolution instead
-  printf("show %lx\n", mbox[5]);
   if (mbox_call(MBOX_CH_PROP, mbox) && mbox[20] == 32 && mbox[28] != 0) {
     mbox[28] &= 0x3FFFFFFF; // convert GPU address to ARM address
     width = mbox[5];        // get actual physical width
@@ -136,12 +135,6 @@ void lfb() {
           // can copy the pixels directly, but for BGR we must swap R
           // (pixel[0]) and B (pixel[2]) channels.
 
-          // if (x / 10 % 2 ^ y / 10 % 2)
-          //   *((unsigned int *)ptr) = (unsigned int)(255 << 16 | 255 << 8 |
-          //   255);
-          // else
-          //   *((unsigned int *)ptr) = (unsigned int)(0 << 16 | 0 << 8 | 0);
-
           *((unsigned int *)ptr) =
               isrgb ? *((unsigned int *)&pixel)
                     : (unsigned int)(pixel[0] << 16 | pixel[1] << 8 | pixel[2]);
@@ -149,7 +142,7 @@ void lfb() {
         }
         ptr += pitch - img_width * 4;
       }
-      for (int i = 0; i < 150000; i++)
+      for (int i = 0; i < 8000000; i++)
         asm volatile("nop");
     }
   }
@@ -159,24 +152,30 @@ void shell() {
   printf("# ");
   char cmd[256];
   read_string(cmd);
-  if (!strcmp(cmd, "pid")) {
+  if (!strcmp(cmd, "help")) {
+    printf("This is user process\n"
+           "exec:\t Exec syscall.img.\n"
+           "pid:\t Show pid of current process.\n"
+           "fork:\t Fork a child process that plays awesome video.\n"
+           "exit:\t Quit.\n");
+  } else if (!strcmp(cmd, "pid")) {
     int pid = getpid();
     printf("Pid is: %d\n", pid);
-  } else if (!strcmp(cmd, "help")) {
-    printf("This is user process\n");
   } else if (!strcmp(cmd, "exec")) {
     exec("syscall.img", 0);
   } else if (!strcmp(cmd, "fork")) {
     int child_pid = fork();
-    printf("Child pid: %d\n", child_pid);
     if (child_pid == 0) {
-      while (1) {
-      }
+      showimage(0);
+    } else {
+      printf("Child pid: %d\n", child_pid);
     }
   } else if (!strcmp(cmd, "exit")) {
-    __exit(0);
-  } else if (!strcmp(cmd, "lfb")) {
-    lfb(0);
+    exit(0);
+  } else if (!strcmp(cmd, "check")) {
+    int el;
+    asm volatile("mrs %0, CurrentEL" : "=r"(el));
+    printf("Current: %d\n", el >> 2);
   } else {
     printf("Not a vaild command!\n");
   }

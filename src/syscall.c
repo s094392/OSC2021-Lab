@@ -39,7 +39,6 @@ int sys_exec(const char *name, char *const argv[]) {
     order++;
   }
   task->code = page_alloc(order);
-  printf("%lx\n", get_page_addr(task->code));
   void *code_addr = (void *)get_page_addr(task->code);
   memcpy(code_addr, cpio_data, cpio_filesize);
 
@@ -97,6 +96,5 @@ void sys_exit() {
 
 int sys_mbox_call(unsigned char ch, unsigned int *mbox) {
   int res = mbox_call(ch, mbox);
-  printf("res: %d\n", res);
   return res;
 }

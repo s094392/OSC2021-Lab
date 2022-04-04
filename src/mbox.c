@@ -136,9 +136,6 @@ void lfb() {
   } else {
     /*uart_puts("Unable to set screen resolution to 1024x768x32\n");*/
   }
-  for (int i = 0; i < 64 * 7; i++) {
-    printf("%d ", header_data[0][0]);
-  }
 
   int x, y;
   while (1) {
@@ -160,7 +157,7 @@ void lfb() {
         }
         ptr += pitch - img_width * 4;
       }
-      for (int i = 0; i < 150000; i++)
+      while (1)
         asm volatile("nop");
     }
   }
