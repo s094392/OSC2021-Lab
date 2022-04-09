@@ -111,7 +111,12 @@ void show_free_list() {
   }
 }
 
-void slabs_init() { INIT_LIST_HEAD(slabs_free); }
+void slabs_init() {
+  slabs_free = simple_alloc(sizeof(struct slab));
+  slabs_full = simple_alloc(sizeof(struct slab));
+  INIT_LIST_HEAD(slabs_free);
+  INIT_LIST_HEAD(slabs_full);
+}
 size_t avaliable_sizes[] = {16, 32, 48, 96, 128, 256, 512};
 
 void *kmalloc(size_t size) {

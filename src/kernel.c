@@ -14,7 +14,6 @@
 #include "timer.h"
 #include "uart.h"
 
-extern void el2_entry();
 extern void el1_entry();
 
 void get_initramfs(char *key, void *data, int len) {
@@ -33,6 +32,7 @@ void first() { sys_exec("syscall.img", NULL); }
 
 void init(struct fdt_header *fdt) {
   uart_init();
+  fdt = (struct fdt_header *)((uint64_t)fdt | 0xffff000000000000);
 
   fdt_traverse(fdt, get_initramfs);
 
