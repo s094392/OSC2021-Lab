@@ -47,6 +47,10 @@ void syscall_handler(struct trap_frame *trap_frame) {
     trap_frame->x0 =
         sys_mbox_call(trap_frame->x0, (unsigned int *)trap_frame->x1);
     break;
+
+  case 7: // exit
+    sys_kill(trap_frame->x0);
+    break;
   }
   // disable_timer_interrupt();
 }

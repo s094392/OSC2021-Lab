@@ -94,6 +94,22 @@ void sys_exit() {
   schedule();
 }
 
+void sys_kill(int pid) {
+  // mark the status of current task to dead and move it from readyqueue to
+  // deadqueue
+  struct list_head *pos;
+  struct task *task;
+  list_for_each(pos, readyqueue) {
+    task = list_entry(pos, struct task, list);
+    if (task->pid == pid) {
+      task->status = TASK_DEAD;
+      break;
+    }
+  }
+  __list_del(task->list.prev, task->list.next);
+  list_add(&task->list, deadqueue);
+}
+
 int sys_mbox_call(unsigned char ch, unsigned int *mbox) {
   int res = mbox_call(ch, mbox);
   return res;

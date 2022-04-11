@@ -10,4 +10,7 @@ int exec(const char *name, char *const argv[]);
 int fork();
 void exit(int status);
 int mbox_call(unsigned char ch, unsigned int *mbox);
+void kill(int pid);
+void register_posix(int, void(*));
+void p_signal(int, int);
 #endif

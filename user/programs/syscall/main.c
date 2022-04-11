@@ -4,6 +4,28 @@
 #include "string.h"
 #include "syscall.h"
 
+int strncmp(const char *s1, const char *s2, register size_t n) {
+  register unsigned char u1, u2;
+  while (n-- > 0) {
+    u1 = (unsigned char)*s1++;
+    u2 = (unsigned char)*s2++;
+    if (u1 != u2)
+      return u1 - u2;
+    if (u1 == '\0')
+      return 0;
+  }
+  return 0;
+}
+
+int atoi(char *str) {
+  int res = 0;
+
+  for (int i = 0; str[i] != '\0'; ++i)
+    res = res * 10 + str[i] - '0';
+
+  return res;
+}
+
 void read_string(char *cmd) {
   char now;
   cmd[0] = 0;
@@ -142,11 +164,13 @@ void showimage() {
         }
         ptr += pitch - img_width * 4;
       }
-      for (int i = 0; i < 8000000; i++)
+      for (int i = 0; i < 1000000; i++)
         asm volatile("nop");
     }
   }
 }
+
+void kill_print() { printf("You can't kill gura!!!!!\n"); }
 
 void shell() {
   printf("# ");
@@ -172,6 +196,14 @@ void shell() {
     }
   } else if (!strcmp(cmd, "exit")) {
     exit(0);
+  } else if (!strncmp(cmd, "kill", 4)) {
+    int pid = atoi(cmd + 5);
+    kill(pid);
+  } else if (!strncmp(cmd, "signal_kill", 11)) {
+    int pid = atoi(cmd + 12);
+    p_signal(9, pid);
+  } else if (!strcmp(cmd, "register")) {
+    register_posix(9, kill_print);
   } else if (!strcmp(cmd, "check")) {
     int el;
     asm volatile("mrs %0, CurrentEL" : "=r"(el));

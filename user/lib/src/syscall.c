@@ -53,3 +53,18 @@ int mbox_call(unsigned char ch, unsigned int *mbox) {
   asm volatile("mov %0, x0" : "=r"(result)::);
   return result;
 }
+
+void kill(int pid) {
+  asm volatile("mov x8, #7");
+  asm volatile("svc 0");
+}
+
+void register_posix(int, void(*)) {
+  asm volatile("mov x8, #8");
+  asm volatile("svc 0");
+}
+
+void p_signal(int, int) {
+  asm volatile("mov x8, #9");
+  asm volatile("svc 0");
+}

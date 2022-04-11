@@ -9,4 +9,5 @@ int sys_exec(const char *name, char *const argv[]);
 int sys_fork();
 void sys_exit();
 int sys_mbox_call(unsigned char ch, unsigned int *mbox);
+void sys_kill(int pid);
 #endif
