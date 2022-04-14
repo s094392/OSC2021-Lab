@@ -49,6 +49,7 @@ void init(struct fdt_header *fdt) {
 
   core_timer_enable(5);
   enable_timer_interrupt();
+
   struct task *first_task = task_create((uint64_t)&first);
 
   task_run(first_task);

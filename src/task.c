@@ -1,6 +1,7 @@
 #include "task.h"
 #include "alloc.h"
 #include "list.h"
+#include "mem.h"
 #include "stdio.h"
 
 int pid_now;
@@ -43,6 +44,9 @@ struct task *task_create(uint64_t addr) {
   task->ustack = page_alloc(1);
   task->sp = task->fp = get_page_addr(task->stack) + 0x1000;
   task->status = TASK_READY;
+  task->pagetable = get_page_addr(page_alloc(1));
+  mappages((void *)task->pagetable, 0, 4096, addr, PT_AF | PT_USER | PT_MEM);
+
   list_add(&task->list, readyqueue);
   return task;
 }
