@@ -68,6 +68,6 @@ void synchronize_handler(uint64_t esr, uint64_t elr,
 }
 
 void irq_handler(uint64_t esr, uint64_t elr, struct trap_frame *trap_frame) {
-  core_timer_handler(4);
+  core_timer_handler(5);
   schedule();
 }

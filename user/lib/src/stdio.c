@@ -103,7 +103,10 @@ char *fgets(char *s, int n, FILE *stream) {
 inline int putchar(int c) {
   char buf[1];
   buf[0] = c;
-  uartwrite(buf, 1);
+  if (buf[0] == '\n')
+    uartwrite("\n\r", 2);
+  else
+    uartwrite(buf, 1);
   return c;
 }
 

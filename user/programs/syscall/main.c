@@ -4,6 +4,20 @@
 #include "string.h"
 #include "syscall.h"
 
+void wait_msec(unsigned int n) {
+  register unsigned long f, t, r;
+  // get the current counter frequency
+  asm volatile("mrs %0, cntfrq_el0" : "=r"(f));
+  // read the current counter
+  asm volatile("mrs %0, cntpct_el0" : "=r"(t));
+  // calculate expire value for counter
+  // t += ((f / 1000) * n) / 1000;
+  t += f * n / 1000;
+  do {
+    asm volatile("mrs %0, cntpct_el0" : "=r"(r));
+  } while (r < t);
+}
+
 int strncmp(const char *s1, const char *s2, register size_t n) {
   register unsigned char u1, u2;
   while (n-- > 0) {
@@ -164,13 +178,16 @@ void showimage() {
         }
         ptr += pitch - img_width * 4;
       }
-      for (int i = 0; i < 1000000; i++)
-        asm volatile("nop");
+      wait_msec(100);
     }
   }
 }
 
-void kill_print() { printf("You can't kill gura!!!!!\n"); }
+void kill_print() {
+  printf("\nYou can't kill gura!!!!!\n");
+  wait_msec(3000);
+  printf("\nOh Nyo!!!!\n");
+}
 
 void shell() {
   printf("# ");
@@ -178,10 +195,15 @@ void shell() {
   read_string(cmd);
   if (!strcmp(cmd, "help")) {
     printf("This is user process\n"
-           "exec:\t Exec syscall.img.\n"
-           "pid:\t Show pid of current process.\n"
-           "fork:\t Fork a child process that plays awesome video.\n"
-           "exit:\t Quit.\n");
+           "help:                  Print this help message.\n"
+           "exec:                  Exec syscall.img.\n"
+           "pid:                   Show pid of current process.\n"
+           "fork:                  Fork a child process that plays awesome "
+           "video.\n"
+           "kill [pid]:            Kill process by pid.\n"
+           "signal_kill [pid]:     Kill process by pid with signal(Advanced).\n"
+           "register:              Regist signal handler(Advanced).\n"
+           "exit:                  Quit.\n");
   } else if (!strcmp(cmd, "pid")) {
     int pid = getpid();
     printf("Pid is: %d\n", pid);
@@ -201,7 +223,7 @@ void shell() {
     kill(pid);
   } else if (!strncmp(cmd, "signal_kill", 11)) {
     int pid = atoi(cmd + 12);
-    p_signal(9, pid);
+    p_signal(pid, 9);
   } else if (!strcmp(cmd, "register")) {
     register_posix(9, kill_print);
   } else if (!strcmp(cmd, "check")) {
@@ -215,7 +237,7 @@ void shell() {
 
 int main() {
   int pid = getpid();
-  printf("Pid is: %d\n", pid);
+  printf("Process start, pid is: %d\n", pid);
 
   while (1)
     shell();
