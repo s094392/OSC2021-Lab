@@ -1,5 +1,6 @@
 #include "alloc.h"
 #include "list.h"
+#include "mem.h"
 #include "stdio.h"
 #include "util.h"
 #include <stdint.h>
@@ -48,7 +49,7 @@ void buddy_system_init() {
 uint64_t get_page_id(struct page *page) { return (page - frame_array); }
 
 uint64_t get_page_addr(struct page *page) {
-  return get_page_id(page) * 0x1000 + BUDDY_START;
+  return PA2KA(get_page_id(page) * 0x1000 + BUDDY_START);
 }
 
 struct page *get_buddy(struct page *buddy) {

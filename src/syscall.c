@@ -2,6 +2,7 @@
 #include "alloc.h"
 #include "cpio.h"
 #include "mbox.h"
+#include "mem.h"
 #include "stdio.h"
 #include "string.h"
 #include "task.h"
@@ -41,9 +42,11 @@ int sys_exec(const char *name, char *const argv[]) {
   task->code = page_alloc(order);
   void *code_addr = (void *)get_page_addr(task->code);
   memcpy(code_addr, cpio_data, cpio_filesize);
+  mappages((pagetable_t)PA2KA(task->pagetable), 0, cpio_filesize,
+           (uint64_t)code_addr, PT_AF | PT_USER | PT_MEM | PT_RW);
 
   // jump to user program and with user stack
-  to_el0(code_addr, get_page_addr(task->ustack) + 0x1000);
+  to_el0(0, 0x0000fffffffff000, task->pagetable);
   return 1;
 }
 

@@ -6,6 +6,7 @@
 #include "dtb.h"
 #include "list.h"
 #include "mbox.h"
+#include "mem.h"
 #include "shell.h"
 #include "stdio.h"
 #include "string.h"
@@ -18,7 +19,7 @@ extern void el1_entry();
 
 void get_initramfs(char *key, void *data, int len) {
   if (!strncmp(key, "linux,initrd-start", 18)) {
-    cpio_addr = (void *)(size_t)__bswap_32(*(uint32_t *)data);
+    cpio_addr = (void *)(PA2KA((size_t)__bswap_32(*(uint32_t *)data)));
   }
 }
 
@@ -32,15 +33,13 @@ void first() { sys_exec("syscall.img", NULL); }
 
 void init(struct fdt_header *fdt) {
   uart_init();
-  fdt = (struct fdt_header *)((uint64_t)fdt | 0xffff000000000000);
-
+  fdt = (struct fdt_header *)(PA2KA((uint64_t)fdt));
   fdt_traverse(fdt, get_initramfs);
 
   simple_alloc_init();
   buddy_system_init();
   slabs_init();
   multitasking_init();
-  el2_entry();
 
   uint64_t tmp;
   asm volatile("mrs %0, cntkctl_el1" : "=r"(tmp));
@@ -51,6 +50,5 @@ void init(struct fdt_header *fdt) {
   enable_timer_interrupt();
 
   struct task *first_task = task_create((uint64_t)&first);
-
   task_run(first_task);
 }

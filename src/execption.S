@@ -17,12 +17,20 @@ to_el0:
     msr     elr_el1, x0
     msr     sp_el0, x1
 
+
+    mov     x3, #0
+    msr     spsr_el1, x3
+
+    dsb ish // ensure write has completed
+    msr ttbr0_el1, x2 // switch translation based address.
+    tlbi vmalle1is // invalidate all TLB entries
+    dsb ish // ensure completion of TLB invalidatation
+
     // set up exception handlers
     ldr     x2, =exception_table
     msr     vbar_el1, x2
 
-    mov     x3, #0
-    msr     spsr_el1, x3
+    isb // clear pipeline
 
     eret
 

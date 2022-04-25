@@ -40,7 +40,7 @@ struct trap_frame {
   uint64_t x0;
 };
 
-extern void to_el0(void *addr, uint64_t usp);
+extern void to_el0(void *addr, uint64_t usp, uint64_t pagetable);
 void enable_timer_interrupt();
 void disable_timer_interrupt();
 

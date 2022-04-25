@@ -6,14 +6,17 @@
 typedef uint64_t pte_t;
 typedef uint64_t *pagetable_t;
 
+#define PA2KA(a) (a + 0xffff000000000000)
+#define KA2PA(a) (a - 0xffff000000000000)
+
 #define PGSIZE 4096 // bytes per page
 #define PGSHIFT 12  // bits of offset within a page
 
 #define PGROUNDUP(sz) (((sz) + PGSIZE - 1) & ~(PGSIZE - 1))
 #define PGROUNDDOWN(a) (((a)) & ~(PGSIZE - 1))
 
-#define PA2PTE(pa) ((((uint64_t)pa) >> 12) << 10)
-#define PTE2PA(pte) (((pte) >> 10) << 12)
+#define PA2PTE(pa) ((((uint64_t)pa) >> 12) << 12)
+#define PTE2PA(pte) (pte & 0xfffffffffffff000)
 
 // extract the three 9-bit page table indices from a virtual address.
 #define PXMASK 0x1FF // 9 bits

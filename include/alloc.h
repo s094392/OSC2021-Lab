@@ -3,8 +3,8 @@
 #include "list.h"
 #include <stdint.h>
 
-#define BUDDY_START 0xffff000000100000
-#define BUDDY_END 0xffff000000200000
+#define BUDDY_START 0x100000
+#define BUDDY_END 0x200000
 
 // simple allocator
 void simple_alloc_init();

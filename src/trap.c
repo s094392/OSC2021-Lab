@@ -57,6 +57,7 @@ void syscall_handler(struct trap_frame *trap_frame) {
 
 void synchronize_handler(uint64_t esr, uint64_t elr,
                          struct trap_frame *trap_frame) {
+
   int iss = esr & ((1 << 24) - 1);
   switch (iss) {
   case 0:
