@@ -212,11 +212,9 @@ void shell() {
   } else if (!strcmp(cmd, "fork")) {
     int child_pid = fork();
     if (child_pid == 0) {
-      printf("I'm child process\n");
-      // showimage(0);
+      showimage(0);
     } else {
       printf("Child pid: %d\n", child_pid);
-      exit(1);
     }
   } else if (!strcmp(cmd, "exit")) {
     exit(0);

@@ -46,7 +46,9 @@ struct task *task_create(uint64_t addr) {
   task->status = TASK_READY;
   task->pagetable = KA2PA(get_page_addr(page_alloc(1)));
   mappages(PA2KA((void *)task->pagetable), 0x0000ffffffffe000, 4096,
-           KA2PA(task->sp), PT_AF | PT_USER | PT_MEM | PT_RW);
+           get_page_addr(task->ustack), PT_AF | PT_USER | PT_MEM | PT_RW);
+  mappages(PA2KA((void *)task->pagetable), 0x3c100000, 0x200000,
+           PA2KA(0x3c100000), PT_AF | PT_USER | PT_MEM | PT_RW);
 
   list_add(&task->list, readyqueue);
   return task;

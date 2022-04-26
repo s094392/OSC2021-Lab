@@ -116,6 +116,10 @@ void sys_kill(int pid) {
 }
 
 int sys_mbox_call(unsigned char ch, unsigned int *mbox) {
-  int res = mbox_call(ch, mbox);
+  struct task *task = get_current_task();
+  unsigned int *new_mbox =
+      (unsigned int *)((uint64_t)mbox - 0x0000ffffffffe000 +
+                       get_page_addr(task->ustack));
+  int res = mbox_call(ch, new_mbox);
   return res;
 }
