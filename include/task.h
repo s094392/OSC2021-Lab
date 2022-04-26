@@ -16,8 +16,8 @@ enum TASK_STATUS {
 struct task {
   uint64_t x19, x20, x21, x22, x23, x24, x25, x26, x27, x28;
   uint64_t fp, lr, sp;
-  uint64_t *ttbr;
   uint64_t pagetable;
+  uint64_t codesize;
   int pid;
   enum TASK_STATUS status;
   struct page *stack;

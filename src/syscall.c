@@ -42,6 +42,7 @@ int sys_exec(const char *name, char *const argv[]) {
   task->code = page_alloc(order);
   void *code_addr = (void *)get_page_addr(task->code);
   memcpy(code_addr, cpio_data, cpio_filesize);
+  task->codesize = cpio_filesize;
   mappages((pagetable_t)PA2KA(task->pagetable), 0, cpio_filesize,
            (uint64_t)code_addr, PT_AF | PT_USER | PT_MEM | PT_RW);
 
@@ -54,7 +55,7 @@ int sys_fork() {
   struct task *task = get_current_task();
   struct task *child_task = task_create(get_page_addr(task->code));
 
-  // Copy context
+  // copy context
   memcpy(child_task, task, sizeof(uint64_t) * 10);
   memcpy((void *)(get_page_addr(child_task->stack)),
          (void *)(get_page_addr(task->stack)), 0x1000);
@@ -63,6 +64,10 @@ int sys_fork() {
 
   // use the same code section
   child_task->code = task->code;
+  void *code_addr = (void *)get_page_addr(task->code);
+  mappages((pagetable_t)PA2KA(child_task->pagetable), 0,
+           child_task->codesize = task->codesize, (uint64_t)code_addr,
+           PT_AF | PT_USER | PT_MEM | PT_RW);
 
   // calculate new sp, fp and trap_frame
   child_task->sp =
@@ -73,9 +78,6 @@ int sys_fork() {
       (struct trap_frame *)((uint64_t)task->trap_frame -
                             get_page_addr(task->stack) +
                             get_page_addr(child_task->stack));
-  child_task->trap_frame->sp_el0 = get_page_addr(child_task->ustack) +
-                                   task->trap_frame->sp_el0 -
-                                   get_page_addr(task->ustack);
 
   // the return value of fork is the child id or 0
   child_task->trap_frame->x0 = 0;

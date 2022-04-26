@@ -45,7 +45,6 @@ struct task *task_create(uint64_t addr) {
   task->sp = task->fp = get_page_addr(task->stack) + 0x1000;
   task->status = TASK_READY;
   task->pagetable = KA2PA(get_page_addr(page_alloc(1)));
-  task->ttbr = &task->pagetable;
   mappages(PA2KA((void *)task->pagetable), 0x0000ffffffffe000, 4096,
            KA2PA(task->sp), PT_AF | PT_USER | PT_MEM | PT_RW);
 
