@@ -9,7 +9,7 @@ pte_t *walk(pagetable_t pagetable, uint64_t va, int alloc) {
       pagetable = (pagetable_t)PA2KA(PTE2PA(*pte));
     } else {
       if (!alloc ||
-          (pagetable = (pagetable_t)get_page_addr(page_alloc(1))) == 0)
+          (pagetable = (pagetable_t)get_page_addr(page_alloc(0))) == 0)
         return 0;
       memset(pagetable, 0, PGSIZE);
       *pte = KA2PA((uint64_t)pagetable) | PT_PAGE;

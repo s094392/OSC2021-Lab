@@ -35,10 +35,11 @@ void buddy_system_init() {
     INIT_LIST_HEAD(free_list[i]);
   }
   // initialize page_frame
-  for (int i = 0; i < page_frame_num; i += 1) {
+  for (int i = 0; i < page_frame_num; i++) {
     INIT_LIST_HEAD(&(frame_array[i].list));
     frame_array[i].status = USED_PAGE;
     frame_array[i].val = 1;
+    frame_array[i].ref = 0;
   }
   // push first frame
   frame_array[0].status = FREE_PAGE;
@@ -52,13 +53,19 @@ uint64_t get_page_addr(struct page *page) {
   return PA2KA(get_page_id(page) * 0x1000 + BUDDY_START);
 }
 
-struct page *get_buddy(struct page *buddy) {
-  return &frame_array[(get_page_id(buddy)) ^ (1 << buddy->val)];
+struct page *get_buddy(struct page *page) {
+  return &frame_array[(get_page_id(page)) ^ (1 << page->val)];
 }
 
+int a;
+
 struct page *page_alloc(int order) {
+  a++;
   struct page *result;
   // alloc larger page when the free list of current order is empty
+  if (order > MAX_PAGE_ORDER) {
+    printf("Memory not enough!\n");
+  }
   if (list_empty(free_list[order])) {
     result = page_alloc(order + 1);
     result->val -= 1;
@@ -69,13 +76,26 @@ struct page *page_alloc(int order) {
   } else {
     // grab the first pages in free list and pop it
     result = list_entry(free_list[order]->next, struct page, list);
-    __list_del(free_list[order], free_list[order]->next->next);
+    __list_del(result->list.prev, result->list.next);
   }
   result->status = ALLOCATED_PAGE;
+  result->ref = 1;
   return result;
 }
 
 void page_free(struct page *page) {
+  // check reference count
+  if (page->ref > 1) {
+    page->ref--;
+    return;
+  }
+  page->ref--;
+
+  // check double free
+  if (page->status != ALLOCATED_PAGE) {
+    printf("Double free occured!\n");
+  }
+
   struct page *buddy = get_buddy(page);
   int order = page->val;
   // find buddy and merge
@@ -90,6 +110,7 @@ void page_free(struct page *page) {
     page->val = 0;
     // push first buddy and remove buddy from previous free list
     first_buddy->val = order + 1;
+    first_buddy->status = ALLOCATED_PAGE;
     __list_del(buddy->list.prev, buddy->list.next);
     // recursivly free merged pages
     page_free(first_buddy);
@@ -138,7 +159,7 @@ void *kmalloc(size_t size) {
   }
   if (!slab) {
     // allocate a page to create a new slab
-    struct page *page = page_alloc(1);
+    struct page *page = page_alloc(0);
     uint64_t base_addr = get_page_addr(page);
     slab = (struct slab *)base_addr;
     slab->page = page;

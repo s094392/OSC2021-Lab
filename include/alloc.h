@@ -22,6 +22,7 @@ enum Page_status {
 
 struct page {
   int val;
+  int ref;
   enum Page_status status;
   struct slab *slab;
   struct list_head list;
@@ -31,6 +32,7 @@ extern struct page *frame_array;
 
 void buddy_system_init();
 uint64_t get_page_addr(struct page *page);
+uint64_t get_page_id(struct page *page);
 struct page *page_alloc(int order);
 void page_free(struct page *page);
 void show_free_list();

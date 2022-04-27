@@ -40,11 +40,14 @@ struct task *task_create(uint64_t addr) {
   struct task *task = kmalloc(sizeof(struct task));
   task->pid = pid_now++;
   task->lr = addr;
-  task->stack = page_alloc(1);
-  task->ustack = page_alloc(1);
+  task->code = page_alloc(0);
+  task->stack = page_alloc(0);
+  task->ustack = page_alloc(0);
   task->sp = task->fp = get_page_addr(task->stack) + 0x1000;
   task->status = TASK_READY;
-  task->pagetable = KA2PA(get_page_addr(page_alloc(1)));
+  task->pagetable = KA2PA(get_page_addr(page_alloc(0)));
+
+  // map stack and mmio
   mappages(PA2KA((void *)task->pagetable), 0x0000ffffffffe000, 4096,
            get_page_addr(task->ustack), PT_AF | PT_USER | PT_MEM | PT_RW);
   mappages(PA2KA((void *)task->pagetable), 0x3c100000, 0x200000,

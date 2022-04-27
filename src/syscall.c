@@ -39,6 +39,7 @@ int sys_exec(const char *name, char *const argv[]) {
   while (cpio_filesize > 0x1000 << order) {
     order++;
   }
+  page_free(task->code);
   task->code = page_alloc(order);
   void *code_addr = (void *)get_page_addr(task->code);
   memcpy(code_addr, cpio_data, cpio_filesize);
@@ -63,7 +64,9 @@ int sys_fork() {
          (void *)(get_page_addr(task->ustack)), 0x1000);
 
   // use the same code section
+  task->code->ref++;
   child_task->code = task->code;
+
   void *code_addr = (void *)get_page_addr(task->code);
   mappages((pagetable_t)PA2KA(child_task->pagetable), 0,
            child_task->codesize = task->codesize, (uint64_t)code_addr,
@@ -94,6 +97,8 @@ void sys_exit() {
   // deadqueue
   struct task *task = get_current_task();
   task->status = TASK_DEAD;
+  page_free(task->code);
+  page_free(task->ustack);
   __list_del(task->list.prev, task->list.next);
   list_add(&task->list, deadqueue);
   schedule();
