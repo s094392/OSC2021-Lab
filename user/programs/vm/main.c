@@ -208,7 +208,7 @@ void shell() {
     int pid = getpid();
     printf("Pid is: %d\n", pid);
   } else if (!strcmp(cmd, "exec")) {
-    exec("syscall.img", 0);
+    exec("vm.img", 0);
   } else if (!strcmp(cmd, "fork")) {
     int child_pid = fork();
     if (child_pid == 0) {

@@ -29,7 +29,7 @@ void user() {
   }
 }
 
-void first() { sys_exec("syscall.img", NULL); }
+void first() { sys_exec("vm.img", NULL); }
 
 void init(struct fdt_header *fdt) {
   uart_init();

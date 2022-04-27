@@ -30,20 +30,25 @@ size_t sys_uartwrite(const char buf[], size_t size) {
 }
 
 int sys_exec(const char *name, char *const argv[]) {
+  struct task *task = get_current_task();
+
+  // free previous code section
+  page_free(task->code);
+
   // extract data from cpio and move it to new page
   struct cpio_newc_header *cpio_file = get_cpio_file(name);
   int cpio_filesize = get_file_size(cpio_file);
   void *cpio_data = get_file_data(cpio_file);
-  struct task *task = get_current_task();
   int order = 1;
   while (cpio_filesize > 0x1000 << order) {
     order++;
   }
-  page_free(task->code);
   task->code = page_alloc(order);
   void *code_addr = (void *)get_page_addr(task->code);
   memcpy(code_addr, cpio_data, cpio_filesize);
   task->codesize = cpio_filesize;
+
+  // map code section to user's 0x0
   mappages((pagetable_t)PA2KA(task->pagetable), 0, cpio_filesize,
            (uint64_t)code_addr, PT_AF | PT_USER | PT_MEM | PT_RW);
 
@@ -97,8 +102,12 @@ void sys_exit() {
   // deadqueue
   struct task *task = get_current_task();
   task->status = TASK_DEAD;
+
+  // free pages
   page_free(task->code);
   page_free(task->ustack);
+
+  // move task to deadqueue
   __list_del(task->list.prev, task->list.next);
   list_add(&task->list, deadqueue);
   schedule();
